@@ -94,77 +94,88 @@ which will require the use of blockchain.
   
 ## TECHNICAL CONSIDERATIONS & PROJECT STRUCTURE
                            
-   
 ### Smart Contract 
-       - Solidity
-       - defines agents and parties
-       - handles identity management
-       - handles basic access rights (through the tier system)
+  
+  + written in Solidity
+  + defines agents and parties
+  + handles identity management
+  + holds basic access rights information (through the tier system)
   
 #### This module will contain the following:
 
-##### The Entity 'class' contains:
+##### The Entity 'class', which contains:
      
-   Properties:
+   _Properties:_
    
-      (p) entityId    - address used to uniquely identify entity
-      (p) tier        - integer determining tier number
-
+      address entityId     - address used to uniquely identify entity
+      int tier             - used to determine the tier number
 
 ##### The Agent (Member, or Individual) class, which extends Entity and contains:
  
-   Properties:
+   _Properties:_
    
-      (p) partyId     - address of party to which this agent pertains (can only pertain to one party!?)
+      address partyId       - address of party to which this agent pertains (can only pertain to one party!?)
 
 
 ##### The Party (Organisation or Institution) class, which also extends Entity and contains:
 
-   Properties:
+   _Properties:_
    
-      (p) adminId     - address of admin of party (which can add or remove agents and change their rights within party)
-      (p) members     - a list of addresses of agents pertaining to this party
-      (p) subparties  - a list of addresses of parties pertaining to this one (that are of lower tier?)
-      (p) maxTier     - integer determining the maximum tier level an agent can have within this party
+      address adminId       - address of admin of party (which can add or remove agents and change their rights within party)
+      [address] members     - a list of addresses of agents pertaining to this party
+      [address] subparties  - a list of addresses of parties pertaining to this one (that are of lower tier?)
+      int maxTier           - integer determining the maximum tier level an agent can have within this party
 
-   Methods:
+   _Methods:_
    
-      (p) removeEntity(address entityId): removes entity from party
-      (p) changeTierLevel(address entityId, int newTier): changes the tier level of a given entity, if called by admin
-      (p) initiateChangeAdmin(address newAdminId): initiates the change to a new admin (function called by current Admin)
-      (p) finalizeChangeAdmin(): should be called after initializeChangeAdmin(newAdminId), by newAdminId (potential new Admin)
+      removeEntity(address entityId):
+          removes entity from party
+          
+      changeTierLevel(address entityId, int newTier): 
+          changes the tier level of a given entity, if called by admin
+      
+      initiateChangeAdmin(address newAdminId): 
+          initiates the change to a new admin (function called by current Admin)
+      
+      finalizeChangeAdmin(): 
+          should be called after initializeChangeAdmin(newAdminId) was called, 
+          by owner of the private key of address newAdminId (potential new admin)
 
 
 ##### The system admin / owner, which also extends Entity and has hard-coded full access to all methods
     
-   Methods:
+   _Methods:_
     
-      (p) changeTierLevel(address partyId, address entity, int newTier): changes the tier level of a given entity
+      changeTierLevel(address partyId, address entity, int newTier): 
+          changes the tier level of a given entity
 
 ### Database
-       - SQL or json 
-       - hosted locally or on the web
-       - holds information about entities
-       - handles more detailed access rights
+  
+  + SQL or json 
+  + hosted locally or on the web
+  + holds information about entities
+  + holds more detailed access-rights information
 
 #### This module will contain the following:
   
   + TBD by week 2
  
 ### Interface
-       - Python 
-       - defines systems' parameters (inputs)
-       - uses web3.py for interfacing with the ethereum network
-       - compiles and launches the smart contract based on params 
-       - provides the connection between the smart contract and the db  
+  
+  + written in Python 
+  + defines systems' parameters (inputs)
+  + uses web3.py for interfacing with the ethereum network
+  + compiles and launches the smart contract based on params  
+  + provides the connection between the smart contract and the database 
 
 #### This module will contain the following:
   
   + TBD by week 3
  
 ### Simulator
-       - Python
-       - used to speed test the system
+  
+  + written in Python
+  + used to speed test the system
 
 #### This module will contain the following:
   
@@ -180,9 +191,9 @@ which will require the use of blockchain.
 #### Smart Contract Module
 
   Defines entities & basic functionality 
-      
-    - define entity, agent & party
-    - methods: assign agent to party, assign admin to party
+    
+  + define entity, agent & party
+  + methods: assign agent to party, assign admin to party
 
 #### Database Module
 
@@ -207,32 +218,36 @@ which will require the use of blockchain.
 #### Interface Module (basic functionality)
     
   Basic bockchain interaction
-  
-    - read data
-    - call functions
+    
+  + read data
+  + call functions
 
   Basic DB interaction
     
-    - read & write to db
+  + read & write
 
 ### Week 3 (Monday 22nd April)
 
+#### Smart Contract Modules
+
+  Launch contract on testnet
+  
 #### Interface Module (advanced functionality)
 
   Blockchain functionality
-   
-    - programatically launch smart contract on testnet
     
-  Blockchain to DB interaction
-      
-    - write functions to connect the two modules
-    - be able to write to DB only if blockchain permits and vice-versa
-    - be able to write to DB by using he encrypted private key of uniqueId
+  + programatically launch smart contract on testnet
+    
+  Blockchain to DB interaction  
+    
+  + write functions to connect the two modules
+  + be able to write to DB only if blockchain permits and vice-versa
+  + be able to write to DB by using he encrypted private key of uniqueId
 
 #### Simulation Module
 
   Defne simulation scenatio
-
+  
 ### Week 4 (Monday 29th April)
 
 #### Simulation Module
@@ -251,14 +266,10 @@ which will require the use of blockchain.
  
 Reading data from the data repository works as such:
 
-An entity makes a request to read data:
+An entity makes a request to read data
 
-    If the data is publicly available, the data is read from the DB
-    and shown to the entity. 
+    If the data is publicly available, it is read from the DB and shown to the entity. 
     
     Otherwise:
-
-        - If the request contained the sender's private key and if the 
-        sender has access to the data, then it will be shown
-
+        - If the request contained the sender's private key and if the sender has access to the data, then it will be shown
         - Otherwise it won't be shown, stating 'access denied'
