@@ -166,8 +166,14 @@
 
 #### This module will contain the following:
   
-  + Check the database_structure.json file
- 
+  + Check the database_structure.json file for overall DB structure.
+  
+  [Agent](https://www.mockaroo.com/defd7460)
+  
+  [Party](https://www.mockaroo.com/04228c10)
+  
+  [Access Rights](https://www.mockaroo.com/9c195070)
+
 ### Interface
   
   + written in Python 
