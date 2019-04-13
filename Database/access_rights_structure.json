@@ -1,0 +1,69 @@
+"access_rights": {
+    
+    "agents" : {
+        
+        /* This determines who has access to the data of agent_id_1 */
+        "agent_id_1"  :   {   // this is an ethereum address
+
+            /* Which agents have access to the data of agent_id_1 */
+            "agents"  :   {
+
+                /* What kind of data can agent_id_a access from agent_id_1 */
+                "agent_id_a"    :   {
+                    "read"      :   ["general", "path/to/data"],    
+                    "write"     :   ["path/to/data"]
+                }, 
+
+                /* What kind of data can agent_id_a see from agent_id_1 */
+                "agent_id_b"    :   {
+                    "read"      :   ["general"]
+                }
+
+            },
+
+            /* Which organizations have access to the data of agent_id_1*/
+            "organizations" :   {
+
+                /* What kind of data can members of org_id_x access from agent_id_1 */
+                "org_id_x"  :   {
+                    
+                    /* what kind of data can members of org_id_x of tier_1 access */
+                    "tier_1"    :   {
+                        "read"  :   ["general", "path/to/data"]
+                    }, 
+
+                    "tier_2"    :   {
+                        "read"  :   ["general", "path/to/data", "path/to/other"],
+                        "write" :   ["path/to/data"]
+                    }, 
+                }
+
+            }
+
+        },
+        /* This determines who has access to the data of agent_Id_1*/
+        "agent_id_2"    :   {
+
+        },
+    },
+
+    "organizations" :   {
+        "org_Id_1"  :   {
+            
+            /* Which agents have access to the data of org_Id_1*/
+            "agents"    :   {
+
+            },
+
+            /* Which organizations have access to the data of org_Id_1*/
+            "organizations" :   {
+
+            }
+        },
+
+        "org_id_2"  :   {
+
+        },
+    }
+
+}

@@ -19,14 +19,14 @@
 			"general_info" 	: 	{															// agent's general information 
 			
 				"unique_id"				: 	"address",										// same as public_key, for redundancy
-				"tier" 					: 	"int",											// determines access/importance level within party
+				"tier" 					: 	"int",											// determines access/importance level within org
 				"first_name" 			: 	"string",	
 				"last_name" 			: 	"string",
 				"email"					:	"email",
 				"birth_date"	 		: 	"date",
 				"gender" 				: 	"string",
 				"position" 				: 	"string", 
-				"party_id"  			: 	"address",			 							// public_key of belonging party
+				"party_id"  			: 	"address",			 							// public_key of belonging organization
 
 				},
 		
@@ -42,35 +42,9 @@
 				"list_2" 					: 	[ ],
 
 				},
-
-			"access_rights" : 	{															// who has access to this data 
-
-				"agents" 				: 	{ 
-
-					"agent_key_1" 			: 	{
-
-						"access_type" 				: 	"string",							// string is one of "read", "write", "rw" 
-						"access_to"					:	"string",							// is one of "general", "overall" or any data path IE "detailed_info/dict_1"	
-					}, 
-				
-				},
-				
-				"parties"				: 	{ 
-
-					"party_key_1"	 		: 	{ 
-						
-						"min_tier"						: 	"int",							// min tier of agent from party who can access data
-						"access_type"					: 	"string", 						// string is one of "read", "write", "rw"
-						"access_to"						:	"string",						// is one of "general", "overall" or any data path IE "detailed_info/dict_1"	
-					
-						}, 
-				
-					},
-
-			},
 		},
 
-	"parties"	:	{																		// party members of system
+	"organizations"	:	{																		// party members of system
 
 		"party_key_a" 	:	{
 			
