@@ -15,7 +15,12 @@ import contract_abi
 
 ''' 
 	This class defines an interface which enables the interaction between an 
-	ethereum smart contract and a locally stored SQL database. 
+	Ethereum smart contract and a locally stored SQL database. 
+
+	The interface does two things: it conects to the Ethereum blockchain to
+	enable the interaction with a specific contract, plus it also connects to
+	the database and interacts with it based on what is written in the block-
+	chain.
 
 	The smart contract acts as an authentication layer on top of the database, 
 	providing the access rights for Entiies to read and write to the database.
@@ -25,9 +30,9 @@ import contract_abi
 
 	The database contains general information about th Entities involved in 
 	the system. An Entity can either be an Individual (Agent) or an Organiza-
-	tion. Entities should not have access to the entire database, instead they
-	should only be allowed to access specific parts. These parts are defined 
-	by the ACCESS RIGHTS module, which will probably be another database.
+	tion. Entities should not have access to the entire database; instead, 
+	they should only be allowed to access specific parts. These parts are 
+	defined by the ACCESS RIGHTS module, which will be another database.
 
 '''
 class ContractDatabaseInterface:
