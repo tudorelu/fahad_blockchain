@@ -39,3 +39,7 @@ print()
 print("data ", data)
 print("encrypted data ", encrypted)
 print("decrypted data ", decrypted)
+
+import hashlib 
+
+print(hashlib.sha224(b"Nobody inspects the spammish repetition").hexdigest())
