@@ -1,8 +1,3 @@
-from web3.auto import w3
-from eth_keys import keys
-from eth_utils import decode_hex
-from ecies import encrypt, decrypt
-
 '''
 
 This script demonstrates how to generate an ethereum account (address and key pair)
@@ -12,6 +7,10 @@ will be used for ensuring that only approved parties will have access to the dat
 '''
 
 ''' ACCOUNT GENERATION '''
+from web3.auto import w3
+from eth_keys import keys
+from eth_utils import decode_hex
+
 print("Web3 keypair")
 
 # Generate ethereum account
@@ -27,6 +26,7 @@ print("public key ", pubk_hex)
 print("private key ", prvk_hex)
 
 ''' ENCRYPTION & DECRYPTION'''
+from ecies import encrypt, decrypt
 
 data = b' GURUMURUHURUBURUBURUNOMDOP '
 
@@ -40,6 +40,7 @@ print("data ", data)
 print("encrypted data ", encrypted)
 print("decrypted data ", decrypted)
 
+''' DATA HASHING '''
 import hashlib 
 
 print(hashlib.sha224(b"Nobody inspects the spammish repetition").hexdigest())

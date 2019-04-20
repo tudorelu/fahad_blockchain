@@ -31,10 +31,10 @@ pragma solidity >=0.4.22 <0.6.0;
 
 contract System {
     
-    address payable admin;
+    address payable admin;                          // system admin
     
-    mapping(address => bool) orgs;
-    mapping(address => bool) agents;
+    mapping(address => bool) validOrgs;             // all valid organizations
+    mapping(address => bool) validAgents;           // all valid agents
     
     struct Entity {
         address payable uniqueId;                   // used as a unique id
@@ -43,7 +43,7 @@ contract System {
     
     struct Agent {
         Entity          ent;
-        address         orgId;                      // id of organization this Agent belongs
+        address         orgId;                      // id of Organization this Agent belongs to
     }
     
     struct Organization {
@@ -55,56 +55,120 @@ contract System {
     struct Device {
         Entity          ent;
     }
-    /* The list of agents that belong to each organization.
-        First address is the uniqueId of an organization;
-        Second address is the uniqueId of an Agent;
+
+    mapping(address => Agent)           agentsList;             // list of all existing Agents
+    mapping(address => Organization)    orgsList;               // list of all existing Orgs
+    mapping(address => Device)          devicesList;            // list of all existing Devices
+
+    /* The list of Agents that belong to each Organization;
+        First address is the uniqueId of an Organization;
+        Second address is the uniqueId of an Agent.
     */
     mapping(address => mapping(address => Agent)) organizationAgents;
+
+    /* The list of Organizations that are under each Org;
+        First address is uniqueID of parent Org;
+        Second address is uniqueId of child Org. 
+    */
     mapping(address => mapping(address => Organization)) organizationOrgs;
     
+    modifier onlyOwner() {
+        require(msg.sender == admin, "Only the system admin can make this call.");
+        _;
+    }
+
+    modifier onlyAddress(address _address) {
+        require(msg.sender == _address, "Unauthorized sender.");
+        _;
+    }
+
+    modifier mustBeAgent(address payable _address) {
+        require(validAgents[_address], "Address not a valid agent.");
+        _;
+    }
+
+    modifier mustBeOrg(address payable _address) { 
+        require (isOrganization(_address), "Address not a valid organization."); 
+        _; 
+    }
+
     constructor () public {
         admin = msg.sender;
     }
     
     /*  Validates address as being of an Agent's by adding it to list of valid Agents. */
-    function createNewAgent (address payable _agentId) public {
-        agents[_agentId] = true;
+    function createNewAgent (address payable _agentId) public onlyOwner() {
+        validAgents[_agentId] = true;
+        
+        Agent memory agent;
+        agent.ent.uniqueId = _agentId;
+        agent.ent.tier = 0;
+        
+        agentsList[_agentId] = agent;
+        delete agent;
     }
     
     /* Check whether address belonngs to a valid Agent */
     function isAgent (address payable _agentId) public view returns (bool) {
-        return agents[_agentId];
+        return validAgents[_agentId];
     }
     
     /* Revokes the address' validity as being of an agent's by removing it from list of Agents. */
-    function removeAgent (address payable _agentId) public {
-        agents[_agentId] = false;
+    function removeAgent (address payable _agentId) public onlyOwner() {
+        validAgents[_agentId] = false;
+        delete agentsList[_agentId];
     }        
     
     /*  Validates address as being of an Organization by adding it to list of valid Orgs. */
-    function createNewOrganization (address payable _orgId) public {
-        orgs[_orgId] = true;
+    function createNewOrganization (address payable _orgId, address payable _adminId) public onlyOwner() mustBeAgent(_adminId) {
+        require(isAgent(_adminId));
+        validOrgs[_orgId] = true;
+        
+        Organization memory org;
+        org.ent.uniqueId = _orgId;
+        org.ent.tier = 0;
+        org.adminId = msg.sender;
+        org.maxAgentTier = 8;
+
+        orgsList[_orgId] = org;
+        delete org;
     }
     
     /* Check whether address belonngs to a valid Organization */
-    function isOrg (address payable _orgId) public view returns (bool) {
-        return orgs[_orgId];
+    function isOrganization (address payable _orgId) public view returns (bool) {
+        return validOrgs[_orgId];
     }        
 
     /* Revokes the address' validity as being of an organization's by removing it from list of Orgs. */
-    function removeOrganization (address payable _orgId) public {
-        orgs[_orgId] = false;
+    function removeOrganization (address payable _orgId) public onlyOwner() mustBeOrg(_orgId){
+        validOrgs[_orgId] = false;
+        delete orgsList[_orgId];
     }
     
-    function assignAgentToOrganization (address payable _agentId, address payable _orgId) public {
-        require(agents[_agentId]);
+    function assignAgentToOrganization (address payable _agentId, address payable _orgId) public 
+    onlyAddress(orgsList[_orgId].adminId) 
+    mustBeAgent(_agentId)
+    mustBeOrg(_orgId) {
         
         Agent memory agent;
         agent.ent.uniqueId = _agentId;
         agent.orgId = _orgId;
 
         organizationAgents[_orgId][_agentId] = agent;
+        delete agent;
         
+    }
+
+    function changeAdminOfOrganization (address payable _adminId, address payable _orgId) public 
+    onlyAddress(orgsList[_orgId].adminId) 
+    mustBeAgent(_adminId)
+    mustBeOrg(_orgId) {
+        require(validAgents[_adminId] && validOrgs[_orgId]);
+
+        Organization memory org = orgsList[_orgId];
+        org.adminId = _adminId;
+        orgsList[_orgId] = org;
+        delete org;
     }
     
 }
