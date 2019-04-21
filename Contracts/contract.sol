@@ -87,11 +87,16 @@ contract System {
         _;
     }
 
-    modifier mustBeOrg(address payable _address) { 
+    modifier mustBeOrganization(address payable _address) { 
         require (isOrganization(_address), "Address not a valid organization."); 
         _; 
     }
-
+    
+    modifier mustNotBeOrganization(address payable _address) {
+        require(!isOrganization(_address), "This address is of an organization. ");
+        _;
+    }
+    
     constructor () public {
         admin = msg.sender;
     }
@@ -100,12 +105,12 @@ contract System {
     function createNewAgent (address payable _agentId) public onlyOwner() {
         validAgents[_agentId] = true;
         
+        
         Agent memory agent;
         agent.ent.uniqueId = _agentId;
         agent.ent.tier = 0;
         
         agentsList[_agentId] = agent;
-        delete agent;
     }
     
     /* Check whether address belonngs to a valid Agent */
@@ -120,8 +125,11 @@ contract System {
     }        
     
     /*  Validates address as being of an Organization by adding it to list of valid Orgs. */
-    function createNewOrganization (address payable _orgId, address payable _adminId) public onlyOwner() mustBeAgent(_adminId) {
-        require(isAgent(_adminId));
+    function createNewOrganization (address payable _orgId, address payable _adminId) public 
+    onlyOwner() 
+    mustBeAgent(_adminId) 
+    mustNotBeOrganization(_orgId){
+        require(!isOrganization(_adminId), "Admin address belongs to an Organization. An Admin cannot must be an Agent and can't be an Organization.");
         validOrgs[_orgId] = true;
         
         Organization memory org;
@@ -131,7 +139,6 @@ contract System {
         org.maxAgentTier = 8;
 
         orgsList[_orgId] = org;
-        delete org;
     }
     
     /* Check whether address belonngs to a valid Organization */
@@ -140,35 +147,39 @@ contract System {
     }        
 
     /* Revokes the address' validity as being of an organization's by removing it from list of Orgs. */
-    function removeOrganization (address payable _orgId) public onlyOwner() mustBeOrg(_orgId){
+    function removeOrganization (address payable _orgId) public onlyOwner() mustBeOrganization(_orgId){
         validOrgs[_orgId] = false;
         delete orgsList[_orgId];
     }
     
+    function viewAgentDetails (address payable _agentId) public view returns (address, int, address) {
+        return (agentsList[_agentId].ent.uniqueId, agentsList[_agentId].ent.tier, agentsList[_agentId].orgId);
+    }
+    
+    /* Makes Agent be part of organization */
     function assignAgentToOrganization (address payable _agentId, address payable _orgId) public 
     onlyAddress(orgsList[_orgId].adminId) 
     mustBeAgent(_agentId)
-    mustBeOrg(_orgId) {
+    mustBeOrganization(_orgId) {
         
         Agent memory agent;
         agent.ent.uniqueId = _agentId;
         agent.orgId = _orgId;
 
         organizationAgents[_orgId][_agentId] = agent;
-        delete agent;
-        
-    }
 
+    }
+    
+    /* Changes admin of Organization */
     function changeAdminOfOrganization (address payable _adminId, address payable _orgId) public 
     onlyAddress(orgsList[_orgId].adminId) 
     mustBeAgent(_adminId)
-    mustBeOrg(_orgId) {
+    mustBeOrganization(_orgId) {
         require(validAgents[_adminId] && validOrgs[_orgId]);
 
         Organization memory org = orgsList[_orgId];
         org.adminId = _adminId;
         orgsList[_orgId] = org;
-        delete org;
     }
     
 }
