@@ -7,18 +7,20 @@ This script contains helpful functions for dealing with our interface, like
 
 '''
 
+import json
+import hashlib 
 from web3.auto import w3
 from eth_keys import keys
 from eth_utils import decode_hex
 from ecies import encrypt, decrypt
-import hashlib 
-import json
+import operator
+from functools import reduce 
 
 class Utilities:
 
 	@staticmethod
 	def generate_ethereum_keypair():
-		# generate ethereum account
+		""" Generate ethereum account """
 		acct =  w3.eth.account.create()
 		# extract public & private keys
 		prvk_hex = acct.privateKey.hex()
@@ -27,12 +29,12 @@ class Utilities:
 
 	@staticmethod
 	def encrypt_data_using_public_key(public_key:str, data:dict):
-		# encrypt data using ethereum public key
+		""" Encrypt data using ethereum public key """
 		return encrypt(public_key, data)
 	
 	@staticmethod
 	def decrypt_data_using_private_key(private_key:str, data:dict):
-		# decrypt data using ethereum private key
+		""" Decrypt data using ethereum private key """
 		return decrypt(private_key, data)
 
 	@staticmethod
@@ -42,3 +44,13 @@ class Utilities:
 		return hashlib.sha224(json.dumps(data, sort_keys=True).encode()).hexdigest()
 		#return hash(json.dumps(data, sort_keys=True))
 		#return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+
+	@staticmethod
+	def get_dict_by_path(root, items):
+		""" Access a nested object in dict by item sequence."""
+		return reduce(operator.getitem, items, root)
+
+	@staticmethod
+	def set_dict_by_path(root, items, value):
+		""" Set a value in a nested object in dict by item sequence."""
+		Utilities.get_dict_by_path(root, items[:-1])[items[-1]] = value

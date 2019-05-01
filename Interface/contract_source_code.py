@@ -32,15 +32,26 @@ pragma solidity >=0.4.22 <0.6.0;
 
 contract System {
     
-    address payable admin;                          // system admin
+    address payable         admin;                  // system admin
     
     mapping(address => bool) validOrgs;             // all valid organizations
     mapping(address => bool) validAgents;           // all valid agents
+    mapping(address => bool) validDevs;             // all valid devices
     
     struct Entity {
-        address payable uniqueId;                   // address used as an unique identifier
-        int             tier;                       // determines the level of importance and access rights
-        string          dataHash;                   // hash of data stored in DB for this Entity; used against data tampering
+        address payable     uniqueId;               // address used as an unique identifier
+        int                 tier;                   // determines the level of importance and access rights
+        string              dataHash;               // hash of data stored in DB for this Entity; used against data tampering
+        
+        /* This mapping determines whether an Agent has access to this Entity's private data */
+        mapping(address => bool)    
+        agentsAccess;
+        
+        /* This mapping determines  
+            - what data can an Agent (address) access and 
+            - what type of access does an Agent have to this Entity's data */
+        mapping(address => mapping(string => AccessType))     
+        agentsAccessRights;
     }
     
     struct Agent {
@@ -52,30 +63,25 @@ contract System {
         Entity          ent;
         address         adminId;                    // address of Organization's admin
         int             maxAgentTier;               // max tier that a member of this Org can have
+        
+        mapping(address => bool)    agentMembers;   // list of agent members of this Organization
+        mapping(address => bool)    orgMembers;     // list of org members of this Organization
     }
-    
+
     struct Device {
         Entity          ent;
         address         adminId;                    // the administrator/owner of this device
         address         userId;                     // the current user of this device
     }
 
-    mapping(address => Agent)           agentsList;             // list of all existing Agents
-    mapping(address => Organization)    orgsList;               // list of all existing Orgs
-    mapping(address => Device)          devicesList;            // list of all existing Devices
-
-    /* The list of Agents that belong to each Organization;
-        First address is the uniqueId of an Organization;
-        Second address is the uniqueId of an Agent.
-    */
-    mapping(address => mapping(address => Agent)) organizationAgents;
-
-    /* The list of Organizations that are under each Org;
-        First address is uniqueID of parent Org;
-        Second address is uniqueId of child Org. 
-    */
-    mapping(address => mapping(address => Organization)) organizationOrgs;
+    enum AccessType {
+        NONE, READ, WRITE, ADMIN
+    }
     
+    mapping(address => Agent)           agentsList;     // list of all existing Agents
+    mapping(address => Organization)    orgsList;       // list of all existing Orgs
+    mapping(address => Device)          devsList;       // list of all existing Devices
+
     modifier onlyOwner() {
         require(msg.sender == admin, "Only the system admin can make this call.");
         _;
@@ -87,7 +93,12 @@ contract System {
     }
 
     modifier mustBeAgent(address payable _address) {
-        require(validAgents[_address], "Address not a valid agent.");
+        require(validAgents[_address], "Address does not belong to a valid agent.");
+        _;
+    }
+    
+    modifier mustNotBeAgent(address payable _address) {
+        require(!validAgents[_address], "Address already belongs to an agent.");
         _;
     }
 
@@ -98,6 +109,16 @@ contract System {
     
     modifier mustNotBeOrganization(address payable _address) {
         require(!isOrganization(_address), "This address belongs to an organization. ");
+        _;
+    }
+    
+    modifier mustBeDevice(address payable _address) { 
+        require (isDevice(_address), "Address not a valid device."); 
+        _; 
+    }
+    
+    modifier mustNotBeDevice(address payable _address) {
+        require(!isDevice(_address), "This address belongs to an device. ");
         _;
     }
     
@@ -147,6 +168,35 @@ contract System {
     /* Shows details of Agent as saved on blockchain */
     function viewAgentDetails (address payable _agentId) public view returns (address, int, string memory, address) {
         return (agentsList[_agentId].ent.uniqueId, agentsList[_agentId].ent.tier,  agentsList[_agentId].ent.dataHash, agentsList[_agentId].orgId);
+    }
+    
+    /* Gets an Agent's access rights to another Agent's data */
+    function getAgentAccessRightsToData(address payable _ownerId, address payable _accessorId, string memory accessPath) public view
+    mustBeAgent(_ownerId)
+    mustBeAgent(_accessorId)
+    returns(AccessType){
+        return agentsList[_ownerId].ent.agentsAccessRights[_accessorId][accessPath];
+    }
+    
+    /* Gives an Agent access another Agent's data */
+    function giveAgentAccessToData(address payable _ownerId, address payable _accessorId, AccessType accessType, string memory accessPath) public 
+    onlyOwner()
+    //onlyAddress(_ownerId)
+    mustBeAgent(_ownerId)
+    mustBeAgent(_accessorId){
+        Agent storage dataOwner = agentsList[_ownerId];
+        dataOwner.ent.agentsAccess[_accessorId] = true;
+        dataOwner.ent.agentsAccessRights[_accessorId][accessPath] = accessType;
+        agentsList[_ownerId] = dataOwner;
+    }
+    
+    /* Removes an Agent's access right to another Agent's data */
+    function removeAgentAccessToData(address payable _ownerId, address payable _accessorId, string memory accessPath) public 
+    onlyOwner()
+    //onlyAddress(_ownerId)
+    mustBeAgent(_ownerId)
+    mustBeAgent(_accessorId){
+        delete agentsList[_ownerId].ent.agentsAccessRights[_accessorId][accessPath];
     }
     
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ORGANIZATION FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -204,22 +254,22 @@ contract System {
     onlyAddress(orgsList[_orgId].adminId) 
     mustBeAgent(_agentId)
     mustBeOrganization(_orgId) {
-        
         Agent memory agent;
         agent.ent.uniqueId = _agentId;
         agent.orgId = _orgId;
 
-        organizationAgents[_orgId][_agentId] = agent;
+        Organization storage org = orgsList[_orgId];
+        org.agentMembers[_agentId] = true;
+        orgsList[_orgId] = org;
 
     }
     
-    /* Changes admin of Organization */
+    /* Changes Admin of Organization */
     function changeAdminOfOrganization (address payable _adminId, address payable _orgId) public 
     onlyAddress(orgsList[_orgId].adminId) 
     mustBeAgent(_adminId)
     mustBeOrganization(_orgId) {
         require(validAgents[_adminId] && validOrgs[_orgId]);
-
         Organization memory org = orgsList[_orgId];
         org.adminId = _adminId;
         orgsList[_orgId] = org;
@@ -227,5 +277,44 @@ contract System {
     
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DEVICE FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     
+    /*  Validates address as being of an Organization by adding it to list of valid Orgs. */
+    function createNewDevice (address payable _devId, address payable _adminId) public 
+    onlyOwner() 
+    mustBeAgent(_adminId) {
+        Device memory dev;
+        dev.ent.uniqueId = _devId;
+        dev.adminId = _adminId;
+        devsList[_devId] = dev;
+        validDevs[_devId] = true;
+    }
+    
+    /* Check whether address belonngs to a valid Organization */
+    function isDevice (address payable _devId) public view returns (bool) {
+        return validDevs[_devId];
+    }        
+
+    /* Revokes the address' validity as being of a device by removing it from list of Devices. */
+    function removeDevice (address payable _devId) public onlyOwner() mustBeDevice(_devId){
+        validDevs[_devId] = false;
+        delete devsList[_devId];
+    }
+        
+    /* Changes the current user of a Device */
+    function setDeviceUser(address payable _devId, address payable _userId) public
+    mustBeAgent(_userId){
+        require (msg.sender == devsList[_devId].adminId, "Unauthorized sender. Must be the owner of the device.");
+        Device memory dev = devsList[_devId];
+        dev.userId = _userId;
+        devsList[_devId] = dev;
+    }
+ 
+    /* Changes the current owner of a Device */
+    function setDeviceOwner(address payable _devId, address payable _newOwnerId) public
+    mustBeAgent(_newOwnerId){
+        require (msg.sender == devsList[_devId].adminId, "Unauthorized sender. Must be the owner of the device.");
+        Device memory dev = devsList[_devId];
+        dev.adminId = _newOwnerId;
+        devsList[_devId] = dev;
+    }
 }
 '''

@@ -11,7 +11,7 @@ ganache [ui]() or [cli]()
 
 ## PYTHON3 
 
-First install the [pip3]() package manager, to be able to install the other useful packages.
+First install the [pip3]() package manager, in order to be able to install the other useful packages.
 
 Web3 (Interface Connecting to ETH network )
 ```py
@@ -64,6 +64,12 @@ interface = ContractDatabaseInterface()
 
 ```py
 
+from pprint import pprint
+from Utilities import Utilities
+from ContractDatabaseInterface import ContractDatabaseInterface
+
+interface = ContractDatabaseInterface()
+
 ### Create an agent, then check database and blockchain data, then check integrity
 
 agent = interface.create_agent(tier=3, data={"general":{"fname":"Tyrion", "lname":"Lannister"}})
@@ -79,7 +85,7 @@ interface.agent_data_integrity(agent.unique_id) ## Should Return True
 
 ### Change agent data in database without changing blockchain, then check data integrity
 
-interface.write_to_database_path([agent.unique_id, 'general', 'fname'], "Kingslayer")
+interface.write_to_database_path(['agents', agent.unique_id, 'general', 'fname'], "The Imp")
 
 pprint(interface.get_agent_database_details(agent.unique_id))
 pprint(Utilities.hash_data(interface.get_agent_database_details(agent.unique_id)))
@@ -103,7 +109,12 @@ interface.agent_data_integrity(agent.unique_id) ## Should Return True
 
 ### Create organization
 
-org = interface.create_organization(tier=5, admin_id=agent.unique_id, data={"general":{"name":"University Hospital", "address":"Rue de la Versaille, London, Paris"}})
+org = interface.create_organization(tier=5, admin_id=agent.unique_id, data={"general":{"name":"House Lannister", "symbol":"Lion", "address":"King's Landing"}})
 
 ```
 
+## TEST ACCESS RIGHTS
+
+```py
+
+```
