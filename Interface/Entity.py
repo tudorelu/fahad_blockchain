@@ -1,5 +1,5 @@
 import json
-from Utilities import Utilities
+from Interface.Utilities import Utilities
 
 class Entity:
 
@@ -18,4 +18,4 @@ class Entity:
 		# hash data
 		self.data_hash = Utilities.hash_data(data)
 		# define access rights
-		self.access_rights = { "agents" : {}, "organizations": {}, "devices":{}}
+		self.has_access_to = { "agents" : [], "organizations": [], "devices":[] }

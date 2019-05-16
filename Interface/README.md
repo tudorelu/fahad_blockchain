@@ -40,7 +40,7 @@ pip install hashlib
 ```
 # Commands for Testing the functionality of the Interface
 
-To test the ContractDatabaseInterface, start Ganache and run python3 from within the Interface folder
+To test the ContractDatabaseInterface, start Ganache, or your own provider and run python3 from within the root folder
 
 After starting Ganache:
 
@@ -53,8 +53,8 @@ python3
 ```py
 
 from pprint import pprint
-from Utilities import Utilities
-from ContractDatabaseInterface import ContractDatabaseInterface
+from Interface.Utilities import Utilities
+from Interface.Interface import ContractDatabaseInterface
 
 interface = ContractDatabaseInterface()
 
@@ -65,19 +65,19 @@ interface = ContractDatabaseInterface()
 ```py
 
 from pprint import pprint
-from Utilities import Utilities
-from ContractDatabaseInterface import ContractDatabaseInterface
+from Interface.Utilities import Utilities
+from Interface.Interface import ContractDatabaseInterface
 
 interface = ContractDatabaseInterface()
 
 ### Create an agent, then check database and blockchain data, then check integrity
 
-agent = interface.create_agent(tier=3, data={"general":{"fname":"Tyrion", "lname":"Lannister"}})
+agent = Agent(interface=interface,tier=3, data={"general":{"fname":"Mister", "lname":"Tyrell"}})
 
-pprint(interface.get_agent_database_details(agent.unique_id))
-pprint(interface.get_agent_blockchain_details(agent.unique_id))
+pprint(agent.get_database_details())
+pprint(agent.get_blockchain_details())
 
-interface.agent_data_integrity(agent.unique_id) ## Should Return True
+agent.has_data_integrity() ## Should Return True
 
 ```
 
@@ -87,11 +87,11 @@ interface.agent_data_integrity(agent.unique_id) ## Should Return True
 
 interface.write_to_database_path(['agents', agent.unique_id, 'general', 'fname'], "The Imp")
 
-pprint(interface.get_agent_database_details(agent.unique_id))
-pprint(Utilities.hash_data(interface.get_agent_database_details(agent.unique_id)))
-pprint(interface.get_agent_blockchain_details(agent.unique_id))
+pprint(agent.get_database_details())
+pprint(Utilities.hash_data(agent.get_database_details()))
+pprint(agent.get_blockchain_details())
 
-interface.agent_data_integrity(agent.unique_id) ## Should Return False
+agent.has_data_integrity() ## Should Return False
 
 ```
 

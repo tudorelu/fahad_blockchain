@@ -1,0 +1,13 @@
+{
+"config": {  
+        "chainId": 1111, 
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "ByzantiumBlock": 0,
+        "ConstantinopleBlock": 0
+    },
+    "difficulty": "0x20000",
+    "gasLimit": "0x80000000000",
+    "alloc": {}
+}
+

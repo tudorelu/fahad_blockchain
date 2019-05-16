@@ -15,8 +15,16 @@ from eth_utils import decode_hex
 from ecies import encrypt, decrypt
 import operator
 from functools import reduce 
+import codecs
 
 class Utilities:
+
+	@staticmethod
+	def get_account_from_private_key(private_key_str, w3=w3):
+		decoder = codecs.getdecoder("hex_codec")
+		private_key_bytes = decoder(private_key_str)[0]
+		pk = keys.PrivateKey(private_key_bytes)
+		return w3.eth.account.privateKeyToAccount(pk)
 
 	@staticmethod
 	def generate_ethereum_keypair():

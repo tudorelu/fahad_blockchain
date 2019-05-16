@@ -1,6 +1,6 @@
 import json
-from Utilities import Utilities
-from Entity import Entity
+from Interface.Utilities import Utilities
+from Interface.Entity import Entity
 
 class Organization(Entity):
 

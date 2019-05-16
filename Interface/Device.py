@@ -1,10 +1,10 @@
 import json
-from Utilities import Utilities
-from Entity import Entity
+from Interface.Utilities import Utilities
+from Interface.Entity import Entity
 
 class Device(Entity):
 
-	def __init__(self, admin_id:str, user_id:str, data:dict):
+	def __init__(self, admin_id:str, user_id:str=None, data:dict=None):
 		super(Device, self).__init__(data=data)
 		self.admin_id = admin_id
 		self.data["general"]["admin_id"] = admin_id
