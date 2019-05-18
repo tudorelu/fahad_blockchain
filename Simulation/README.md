@@ -41,7 +41,7 @@ agent1.give_agent_access_to_data(agent2.unique_id, AccessType.ADMIN, "data_1")
 
 agent1.get_agent_access_rights_to_data(agent2.unique_id, "data_1")
 
-agent2.write_to_agent_data_path(path=["data_1"], value={"succesful_write_by":agent2.unique_id}, owner_id=agent1.unique_id)
+agent2.write_to_agent_data_path(path=["data_1", "subfolder_1"], value={"succesful_written_by":agent2.unique_id}, owner_id=agent1.unique_id)
 
 agent1.has_data_integrity()
 agent2.has_data_integrity()

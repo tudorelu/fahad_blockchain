@@ -32,3 +32,6 @@
 23:57:19.618455 table@compaction committed F-1 S-492KiB Ke·0 D·12048 T·56.681883ms
 23:57:19.619576 table@remove removed @5
 23:57:19.619771 table@remove removed @2
+=============== May 17, 2019 (AEST) ===============
+02:17:21.852038 db@close closing
+02:17:21.898191 db@close done T·46.14193ms

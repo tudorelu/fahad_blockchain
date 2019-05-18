@@ -72,3 +72,5 @@
 01:47:37.435227 table@compaction committed F-1 S-504KiB Ke·0 D·42603 T·1.229738527s
 01:47:37.462267 table@remove removed @18
 01:47:37.504121 table@remove removed @16
+02:17:21.940655 db@close closing
+02:17:21.983166 db@close done T·42.507056ms

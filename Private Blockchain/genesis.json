@@ -6,8 +6,7 @@
         "ByzantiumBlock": 0,
         "ConstantinopleBlock": 0
     },
-    "difficulty": "0x20000",
+    "difficulty": "0x2000",
     "gasLimit": "0x80000000000",
     "alloc": {}
 }
-
