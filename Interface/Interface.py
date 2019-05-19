@@ -189,13 +189,16 @@ class ContractDatabaseInterface:
 		"""Writes data to the database path
 		path: list of str, formatted as ["path", "to", "data"]"""
 		datastore = {}
-		with open(self.database_path, 'r') as f:
-			datastore = json.load(f)
+		try:
+			with open(self.database_path, 'r') as f:
+				datastore = json.load(f)
 
-		with open(self.database_path, 'w') as f:	
-			Utilities.set_dict_by_path(datastore, path, value)
-			f.write(json.dumps(datastore, indent=4))
-
+			with open(self.database_path, 'w') as f:	
+				Utilities.set_dict_by_path(datastore, path, value)
+				f.write(json.dumps(datastore, indent=4))
+		except:
+			return False
+			
 		return True
 
 	#################### ORGANIZATION FUNCTIONS ######################

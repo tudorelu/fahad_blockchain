@@ -40,7 +40,7 @@ class Agent:
 			self.interface.save_entity_data_to_database(self, root='agents')
 
 		# put 10 eth into agent's account
-		self.interface.w3.personal.sendTransaction({"to":self.unique_id, "from": self.interface.w3.personal.listAccounts[0], "value":self.interface.w3.toWei("10", "ether")}, "")
+		self.interface.w3.personal.sendTransaction({"to":self.unique_id, "from": self.interface.w3.personal.listAccounts[0], "value":self.interface.w3.toWei("1", "ether")}, "")
 
 		# TODO: Have Option Which Reconstructs Agent From Blockchain and Database
 
@@ -105,7 +105,7 @@ class Agent:
 				spath = spath + p+'/'
 			spath = spath + path[-1]
 
-			access_right = self.interface.get_agent_access_rights_to_another_agent_data(accessor_id=self.unique_id, owner_id=owner_id, data_path=spath, from_address=self.interface.w3.eth.defaultAccount)
+			access_right = self.interface.get_agent_access_rights_to_another_agent_data(accessor_id=self.unique_id, owner_id=owner_id, data_path=spath, from_address=owner_id)
 			if access_right != 1 and access_right != 3:
 				return None
 
@@ -113,17 +113,29 @@ class Agent:
 
 	def write_to_agent_data_path(self, path:list, value:any, owner_id:str):
 		
+		access_right = 0
+
 		if owner_id != self.unique_id:
-			spath = ''
-			for p in path[:-1]:
-				spath = spath + p+'/'
-			spath = spath + path[-1]
+			i = 1
 
-			access_right = self.interface.get_agent_access_rights_to_another_agent_data(accessor_id=self.unique_id, owner_id=owner_id, data_path=spath, from_address=self.interface.w3.eth.defaultAccount)
-			print("Access Right is "+str(access_right))
-			if access_right != 2 and access_right != 3:
-				print("Doesn't have the correct access rights! Needs 2 or 3 but has "+str(access_right))
-				return False
+			while access_right not in [2,3]:	
+				if i >= len(path):
+					return False
 
-		return self.interface.write_to_database_path(["agents", owner_id] + path, value)
-	
+				newPath = path[:i]
+				spath = ''
+				
+				for p in newPath[:-1]:
+					spath = spath + p+'/'
+				spath = spath + newPath[-1]
+
+				print("checking access right for "+spath)
+				access_right = self.interface.get_agent_access_rights_to_another_agent_data(accessor_id=self.unique_id, owner_id=owner_id, data_path=spath, from_address=owner_id)
+				print("access right is "+str(access_right))
+
+				i = i+1
+
+		if not self.interface.write_to_database_path(["agents", owner_id] + path, value):
+			return False
+
+		return self.validate_data_on_blockchain()	

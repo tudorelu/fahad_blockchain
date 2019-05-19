@@ -8,7 +8,7 @@ To initialize private blockchain from genesis file, type:
 To connect to private blockchain:
 
 ```sh
-geth --datadir Data --networkid 11111 --rpc --rpcport 8543 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --rpcapi "eth,net,web3,personal,miner"
+geth --datadir Data --networkid 11111 --rpc --rpcport 8543 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --rpcapi "eth,net,web3,personal,miner" console
 ```
 
 To connect to private blockchain from second console window
@@ -35,4 +35,4 @@ web3.personal.unlockAccount(web3.personal.listAccounts[0], "", 1000)
 Find how to connect to private blockchain from another machine. Maybe it has something to do with 
 adding an already running node as a bootnode:
 
-enode://6e1de03204cd6136c99a665b5c11eba57639b5389455d76299e9aab2fb6c7dc4bc6d139d42a5e6f5eb74bbd81421950bbb418692ce32daad018007709c364963@127.0.0.1:30303
+admin.addPeer("enode://50c5f812da8c8eab832fa29258e683132b36ace28f9fe3be908e5ff33981f27dcaa13901089827f22a3d8693fd6e6cecdf629683fdde32695bd2ae1961a7dab5@203.214.112.190:30303?discport=0")

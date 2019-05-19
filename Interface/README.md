@@ -7,7 +7,7 @@
 
 [solidity]()
 
-ganache [ui]() or [cli]()
+[geth]()
 
 ## PYTHON3 
 
@@ -31,7 +31,7 @@ pip install eth_utils
 
 Ellyptic Curve Cryptography for Wallet Generation
 ```py
-pip install py_ecies
+pip install eciespy
 ```
 
 Library for Hashing Data
