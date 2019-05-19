@@ -6,6 +6,9 @@ from pprint import pprint
 from Interface.Utilities import Utilities
 from Interface.Interface import ContractDatabaseInterface
 
+from Interface.Agent import Agent
+from Interface.Constants import AccessType
+
 from multiprocessing import Pool
 
 class Simulation:
@@ -73,6 +76,129 @@ class Simulation:
 			print("\t Creating one device took %.4f seconds." % (end-start))
 		devs_end = time.time()
 		print("Creating " +str(devs_no)+ " devices took %.4f seconds." % (devs_end-devs_start))
+
+	@staticmethod
+	def generic_simulation():
+
+		interface = ContractDatabaseInterface(contract_address="0x37C6a1af8aF0F9BE45Ae3869FA6510276b06b0fC", provider_link="http://127.0.0.1:8543", time_it=True)
+
+		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
+		start = time.time()
+		agent1 = Agent(interface, time_it=True)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 2 ~~~~~~~~~~~~")
+		start = time.time()
+		agent2 = Agent(interface, time_it=True)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 2 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~")
+		start = time.time()
+		agent3 = Agent(interface, time_it=True)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 1 DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		agent1.has_data_integrity()
+		end = time.time()
+		print("~~~~~~~~~~~~ CHECKING AGENT 1 DATA INTEGRITY ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+		
+		print("~~~~~~~~~~~~ CHECKING AGENT 2 DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		agent2.has_data_integrity()
+		end = time.time()
+		print("~~~~~~~~~~~~ CHECKING AGENT 2 DATA INTEGRITY ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 3 DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		agent3.has_data_integrity()
+		end = time.time()
+		print("~~~~~~~~~~~~ CHECKING AGENT 3 DATA INTEGRITY ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ GIVE AGENT 2 ADMIN ACCESS TO AGENT 1's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent1.give_agent_access_to_data(agent2.unique_id, AccessType.ADMIN, "data_1")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ GIVE AGENT 3 ADMIN ACCESS TO AGENT 1's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent1.give_agent_access_to_data(agent3.unique_id, AccessType.ADMIN, "data_1")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+		print("~~~~~~~~~~~~ GIVE AGENT 1 ADMIN ACCESS TO AGENT 2's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent2.give_agent_access_to_data(agent1.unique_id, AccessType.ADMIN, "data_2")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+		print("~~~~~~~~~~~~ GIVE AGENT 3 ADMIN ACCESS TO AGENT 2's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent2.give_agent_access_to_data(agent3.unique_id, AccessType.ADMIN, "data_2")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+		# agent1.get_agent_access_rights_to_data(agent2.unique_id, "data_1")
+		# agent1.get_agent_access_rights_to_data(agent3.unique_id, "data_1")
+		# agent2.get_agent_access_rights_to_data(agent1.unique_id, "data_2")
+		# agent2.get_agent_access_rights_to_data(agent3.unique_id, "data_2")
+
+		try:
+			while True:
+				print("~~~~~~~~~~~~ AGENT 2 IS WRITING TO AGENT 1's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent2.write_to_agent_data_path(path=["data_1", "subfolder_1"], value={"succesful_written_by":agent2.unique_id}, owner_id=agent1.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+				
+				print("~~~~~~~~~~~~ AGENT 3 IS READING FROM AGENT 1's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent3.read_agent_data_path(path=["data_1", "subfolder_1"], owner_id=agent1.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+				print("~~~~~~~~~~~~ AGENT 1 IS WRITING TO AGENT 2's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent1.write_to_agent_data_path(path=["data_2", "subfolder_1"], value={"succesful_written_by":agent1.unique_id}, owner_id=agent2.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+				print("~~~~~~~~~~~~ AGENT 3 IS READING FROM AGENT 2's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent3.read_agent_data_path(path=["data_2", "subfolder_1"], owner_id=agent2.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		except KeyboardInterrupt:
+			print("Quitting ... ")
+
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 1's DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		print("Has data integrity? "+agent1.has_data_integrity())
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 2's DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		print("Has data integrity? "+agent2.has_data_integrity())
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 3's DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		print("Has data integrity? "+agent3.has_data_integrity())
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 	@staticmethod
 	def time_function(func:any, args:tuple=()):

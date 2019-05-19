@@ -65,19 +65,40 @@ from Interface.Utilities import Utilities
 
 class ContractDatabaseInterface:
 
-	def __init__(self, contract_address:str=None, provider_link:str= "http://127.0.0.1:7545"):
-	
+	def __init__(self, contract_address:str=None, provider_link:str= "http://127.0.0.1:7545", time_it:bool=False):
+		
+		self.time_it					= time_it
+
+		if self.time_it:
+			start = time.time()
+
 		# this connects to the web3 provider (blockchain node)		
 		self.w3 						= Web3(HTTPProvider(provider_link))
+
+		if self.time_it:
+			end = time.time();
+			print ("Connecting to w3 provider took  %.3f s " % (end - start));
 
 		# set pre-funded account as sender
 		self.w3.eth.defaultAccount		= self.w3.eth.accounts[0]
 
 		# either load a contract from address or instantiate a new one
+
+		if self.time_it:
+			start = time.time()
+			
 		if contract_address == None:
 			self.contract_instance 		= self.create_new_contract_instance()
+
+			if self.time_it:
+				end = time.time();
+				print ("Creating new contract instance took  %.3f s " % (end - start));
 		else:
 			self.contract_instance 		= self.get_contract_instance_from_address(contract_address);
+
+			if self.time_it:
+				end = time.time();
+				print ("Loading contract instance from address took  %.3f s " % (end - start));
 
 		# set the database path
 		self.database_path 				= os.getcwd()+"/Database/database.json"
@@ -128,6 +149,9 @@ class ContractDatabaseInterface:
 		""" Call contract function
 		function_name : same of smart contract function to call
 		returns : True if function call was succesfull, False otherwise """
+		if self.time_it:
+			start = time.time();
+			
 		if from_address == None:
 			from_address = self.w3.eth.defaultAccount
 
@@ -142,11 +166,19 @@ class ContractDatabaseInterface:
 
 		tx_hash = self.contract_instance.functions[function_name](*args).transact({"from":from_address})
 		tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
-		print(tx_receipt)
+		# print(tx_receipt)
+
+		if self.time_it:
+			end = time.time();
+			print ("Calling " + function_name + " took  %.3f s " % (end - start));
+
 		return tx_receipt['status'] == 1
 
 	def contract_call(self, function_name:str, args:tuple=(), from_address:str=None, account_password=""):
 		""" Call contract view function """
+		if self.time_it:
+			start = time.time();
+
 		if from_address == None:
 			from_address = self.w3.eth.defaultAccount
 		
@@ -159,7 +191,13 @@ class ContractDatabaseInterface:
 			print("Error unlocking account")	
 			return None
 		
-		return self.contract_instance.functions[function_name](*args).call({"from":from_address})
+		ret =  self.contract_instance.functions[function_name](*args).call({"from":from_address})
+
+		if self.time_it:
+			end = time.time();
+			print ("Calling " + function_name + " took  %.3f s " % (end - start));
+
+		return ret
 
 	def get_agent_access_rights_to_another_agent_data(self, accessor_id:str, owner_id:str, data_path:str, from_address:str=None):
 		""" Checks what kind of access rights does accessor_id have to owner_id's data_path """
@@ -180,15 +218,25 @@ class ContractDatabaseInterface:
 	def read_database_path(self, path:list):
 		"""Reads data within database path
 		path: list of str, as ["path", "to", "data"]"""
+		if self.time_it:
+			start = time.time();
 
 		with open(self.database_path, 'r') as f:	
 			datastore = json.load(f)
 			return Utilities.get_dict_by_path(datastore, path)
 
+		if self.time_it:
+			end = time.time();
+			print ("Reading from DB took  %.3f s " % (end - start));
+
 	def write_to_database_path(self, path:list, value:any):
 		"""Writes data to the database path
 		path: list of str, formatted as ["path", "to", "data"]"""
 		datastore = {}
+		
+		if self.time_it:
+			start = time.time();
+
 		try:
 			with open(self.database_path, 'r') as f:
 				datastore = json.load(f)
@@ -199,6 +247,10 @@ class ContractDatabaseInterface:
 		except:
 			return False
 			
+		if self.time_it:
+			end = time.time();
+			print ("Writing to DB took  %.3f s " % (end - start));
+
 		return True
 
 	#################### ORGANIZATION FUNCTIONS ######################
