@@ -184,19 +184,19 @@ class Simulation:
 
 		print("~~~~~~~~~~~~ CHECKING AGENT 1's DATA INTEGRITY ~~~~~~~~~~~~")
 		start = time.time()
-		print("Has data integrity? "+agent1.has_data_integrity())
+		print("Has data integrity? "+str(agent1.has_data_integrity()))
 		end = time.time()
 		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CHECKING AGENT 2's DATA INTEGRITY ~~~~~~~~~~~~")
 		start = time.time()
-		print("Has data integrity? "+agent2.has_data_integrity())
+		print("Has data integrity? "+str(agent2.has_data_integrity()))
 		end = time.time()
 		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CHECKING AGENT 3's DATA INTEGRITY ~~~~~~~~~~~~")
 		start = time.time()
-		print("Has data integrity? "+agent3.has_data_integrity())
+		print("Has data integrity? "+str(agent3.has_data_integrity()))
 		end = time.time()
 		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
