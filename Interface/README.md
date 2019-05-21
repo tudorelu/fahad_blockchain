@@ -1,42 +1,41 @@
 # Installation Prerequisites
 
 ## SYSTEM
-[python3]()
+[python >= 3.6](http://lmgtfy.com/?q=install+python3)
 
-[ethereum]()
+[ethereum & geth](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum)
 
-[solidity]()
+[solidity compiler](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html#binary-packages)
 
-[geth]()
 
 ## PYTHON3 
 
-First install the [pip3]() package manager, in order to be able to install the other useful packages.
+First install the pip3 ([ubuntu](https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/), [mac](https://evansdianga.com/install-pip-osx/) or [windows](http://lmgtfy.com/?q=install+pip3+on+windows)) package manager, in order to be able to install the other useful packages.
 
 Web3 (Interface Connecting to ETH network )
 ```py
-pip install web3
+pip3 install web3
 ```
 
 Solidity Compiler
 ```py
-pip install py_solcx
+pip3 install py_solcx
 ```
 
 Ethereum Key Utilities
 ```py
-pip install eth_keys
-pip install eth_utils
+pip3 install eth_keys
+pip3 install eth_utils
 ```
 
 Ellyptic Curve Cryptography for Wallet Generation
 ```py
-pip install eciespy
+pip3 install eciespy
 ```
 
 Library for Hashing Data
 ```py
-pip install hashlib
+pip3 install hashlib
 ```
 # Commands for Testing the functionality of the Interface
 
