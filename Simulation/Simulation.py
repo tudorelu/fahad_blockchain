@@ -80,7 +80,7 @@ class Simulation:
 	@staticmethod
 	def generic_simulation():
 
-		interface = ContractDatabaseInterface(contract_address="0x37C6a1af8aF0F9BE45Ae3869FA6510276b06b0fC", provider_link="http://127.0.0.1:8543", time_it=True)
+		interface = ContractDatabaseInterface(contract_address="0x5E6631df89013E5a3C01cA03254D5214Ae5A0D09", provider_link="http://127.0.0.1:8543", time_it=True)
 
 		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
 		start = time.time()
