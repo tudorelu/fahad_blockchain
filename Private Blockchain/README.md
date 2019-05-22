@@ -2,13 +2,15 @@
 To initialize private blockchain from genesis file, type:
 
 ```sh
-	geth --identity 11111 init genesis.json --datadir Private\ Blockchain/BlockchainData/Main
+geth --identity 898911 init Private\ Blockchain/genesis.json --datadir Private\ Blockchain/ChainData
 ```
 
 To connect to private blockchain:
 
 ```sh
-geth --datadir Private\ Blockchain/BlockchainData/Main --networkid 11111 --rpc --rpcport 8543 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --rpcapi "eth,net,web3,personal,miner" console < admin.addPeer("enode://9137389b92b6ff262c71c29cb9023293753b672d26cb5a7eae2e64c0b289734f0ac2f0aa65bb700a06447e6480ca17376a0f7f8eac13e470c6fd6efad3840b75@203.214.112.190:60006?discport=0")
+geth --datadir Private\ Blockchain/ChainData --networkid 898911 --rpc --rpcport 8543 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --rpcapi "eth,net,web3,personal,miner" console
+
+admin.addPeer("enode://36e68383558a83cb524074530feac5884c04b84d2d49115e7a339a4a1e0e103db50eaec0bbcd2a0f3b82d065ce439428c1c365fc12d89e7bccf45ef7c1371e3f@203.214.112.190:62295?discport=0")
 
 ```
 

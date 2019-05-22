@@ -1,6 +1,6 @@
 {
 "config": {  
-        "chainId": 1111, 
+        "chainId": 8989, 
         "eip155Block": 0,
         "eip158Block": 0,
         "ByzantiumBlock": 0,

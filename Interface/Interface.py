@@ -22,28 +22,7 @@ Written by Tudor Barbulescu.
 	tion. Entities should not have access to the entire database; instead, 
 	they should only be allowed to access specific parts. These parts are 
 	defined by the ACCESS RIGHTS module, which will be another database.
-
-Remember to run Ganache OR Geth in parallel with running this interface to connect to a node. 
-
-for Ganache, start the UI 
-
-for Geth:
-	in a terminal type:
-		```sh
-		geth --testnet --syncmode "light" --rpc --rpcapi db,eth,net,web3,personal,admin --cache=1024  --rpcport 8545
-		```
-
-	then, in another terminal:
-		```sh
-		geth attach http://127.0.0.1:8545
-		```
-
-	to attach to the running node, then
-		```sh
-		web3.personal.unlockAccount(web3.personal.listAccounts[0])
-		```
-	to unlock the wallet, from which we'll call all functions
-	
+		
 '''
 import os
 import sys

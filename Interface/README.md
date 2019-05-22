@@ -12,30 +12,20 @@
 
 First install the pip3 ([ubuntu](https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/), [mac](https://evansdianga.com/install-pip-osx/) or [windows](http://lmgtfy.com/?q=install+pip3+on+windows)) package manager, in order to be able to install the other useful packages.
 
-Web3 (Interface Connecting to ETH network )
-```py
+```sh
+# Web3 (Interface Connecting to ETH network )
 pip3 install web3
-```
 
-Solidity Compiler
-```py
-pip3 install py_solcx
-```
+# Solidity Compiler
+pip3 install py-solc-x
 
-Ethereum Key Utilities
-```py
+#Ethereum Key Utilities
 pip3 install eth_keys
 pip3 install eth_utils
-```
 
-Ellyptic Curve Cryptography for Wallet Generation
-```py
+#Ellyptic Curve Cryptography for Wallet Generation
 pip3 install eciespy
-```
 
-Library for Hashing Data
-```py
-pip3 install hashlib
 ```
 # Commands for Testing the functionality of the Interface
 
@@ -46,16 +36,6 @@ After starting Ganache:
 ```sh
 cd Interface
 python3
-
-```
-
-```py
-
-from pprint import pprint
-from Interface.Utilities import Utilities
-from Interface.Interface import ContractDatabaseInterface
-
-interface = ContractDatabaseInterface()
 
 ```
 
@@ -98,9 +78,9 @@ agent.has_data_integrity() ## Should Return False
 
 ### Change data_hash in blockchain to match the actual hash of database
 
-interface.validate_agent_data_on_blockchain(agent.unique_id)
+agent.validate_data_on_blockchain()
 
-interface.agent_data_integrity(agent.unique_id) ## Should Return True
+agent.has_data_integrity() ## Should Return True
 
 ```
 
