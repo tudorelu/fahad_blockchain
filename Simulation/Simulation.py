@@ -79,7 +79,13 @@ class Simulation:
 
 	@staticmethod
 	def generic_simulation():
-
+		''' 
+			Runs a generic simulation involving 6 entities reading and writing data to and from each other. 
+			Run this on 15 separate nodes and you're simulating a system with 90 entities interacting on the blockchain.
+ 
+			Compute the average amount of time it takes for a function on the blockchain to be computed .
+		'''
+ 
 		interface = ContractDatabaseInterface(contract_address="0x5E6631df89013E5a3C01cA03254D5214Ae5A0D09", provider_link="http://127.0.0.1:8543", time_it=True)
 
 		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
@@ -100,23 +106,23 @@ class Simulation:
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
-		print("~~~~~~~~~~~~ CHECKING AGENT 1 DATA INTEGRITY ~~~~~~~~~~~~")
+		print("~~~~~~~~~~~~ CREATING AGENT 4 ~~~~~~~~~~~~")
 		start = time.time()
-		agent1.has_data_integrity()
+		agent4 = Agent(interface, time_it=True)
 		end = time.time()
-		print("~~~~~~~~~~~~ CHECKING AGENT 1 DATA INTEGRITY ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
-		
-		print("~~~~~~~~~~~~ CHECKING AGENT 2 DATA INTEGRITY ~~~~~~~~~~~~")
-		start = time.time()
-		agent2.has_data_integrity()
-		end = time.time()
-		print("~~~~~~~~~~~~ CHECKING AGENT 2 DATA INTEGRITY ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+		print("~~~~~~~~~~~~ CREATING AGENT 4 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
-		print("~~~~~~~~~~~~ CHECKING AGENT 3 DATA INTEGRITY ~~~~~~~~~~~~")
+		print("~~~~~~~~~~~~ CREATING AGENT 5 ~~~~~~~~~~~~")
 		start = time.time()
-		agent3.has_data_integrity()
+		agent5 = Agent(interface, time_it=True)
 		end = time.time()
-		print("~~~~~~~~~~~~ CHECKING AGENT 3 DATA INTEGRITY ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+		print("~~~~~~~~~~~~ CREATING AGENT 5 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~")
+		start = time.time()
+		agent5 = Agent(interface, time_it=True)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ GIVE AGENT 2 ADMIN ACCESS TO AGENT 1's DATA ~~~~~~~~~~~~")
 		start = time.time()
@@ -144,6 +150,33 @@ class Simulation:
 		end = time.time()
 		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
+
+
+		print("~~~~~~~~~~~~ GIVE AGENT 5 ADMIN ACCESS TO AGENT 4's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent4.give_agent_access_to_data(agent5.unique_id, AccessType.ADMIN, "data_1")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ GIVE AGENT 6 ADMIN ACCESS TO AGENT 4's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent4.give_agent_access_to_data(agent6.unique_id, AccessType.ADMIN, "data_1")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+		print("~~~~~~~~~~~~ GIVE AGENT 4 ADMIN ACCESS TO AGENT 5's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent5.give_agent_access_to_data(agent4.unique_id, AccessType.ADMIN, "data_2")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+		print("~~~~~~~~~~~~ GIVE AGENT 6 ADMIN ACCESS TO AGENT 5's DATA ~~~~~~~~~~~~")
+		start = time.time()
+		agent5.give_agent_access_to_data(agent6.unique_id, AccessType.ADMIN, "data_2")
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		# agent1.get_agent_access_rights_to_data(agent2.unique_id, "data_1")
 		# agent1.get_agent_access_rights_to_data(agent3.unique_id, "data_1")
@@ -178,6 +211,33 @@ class Simulation:
 				end = time.time()
 				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
+
+				print("~~~~~~~~~~~~ AGENT 5 IS WRITING TO AGENT 4's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent5.write_to_agent_data_path(path=["data_1", "subfolder_1"], value={"succesful_written_by":agent5.unique_id}, owner_id=agent4.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+				
+				print("~~~~~~~~~~~~ AGENT 6 IS READING FROM AGENT 4's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent6.read_agent_data_path(path=["data_1", "subfolder_1"], owner_id=agent4.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+				print("~~~~~~~~~~~~ AGENT 4 IS WRITING TO AGENT 5's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent4.write_to_agent_data_path(path=["data_2", "subfolder_1"], value={"succesful_written_by":agent4.unique_id}, owner_id=agent5.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+				print("~~~~~~~~~~~~ AGENT 6 IS READING FROM AGENT 5's DATA ~~~~~~~~~~~~")
+				start = time.time()
+				agent6.read_agent_data_path(path=["data_2", "subfolder_1"], owner_id=agent5.unique_id)
+				end = time.time()
+				print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
 		except KeyboardInterrupt:
 			print("Quitting ... ")
 
@@ -197,6 +257,25 @@ class Simulation:
 		print("~~~~~~~~~~~~ CHECKING AGENT 3's DATA INTEGRITY ~~~~~~~~~~~~")
 		start = time.time()
 		print("Has data integrity? "+str(agent3.has_data_integrity()))
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 4's DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		print("Has data integrity? "+str(agent4.has_data_integrity()))
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 5's DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		print("Has data integrity? "+str(agent5.has_data_integrity()))
+		end = time.time()
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CHECKING AGENT 6's DATA INTEGRITY ~~~~~~~~~~~~")
+		start = time.time()
+		print("Has data integrity? "+str(agent6.has_data_integrity()))
 		end = time.time()
 		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 

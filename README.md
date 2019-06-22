@@ -1,298 +1,156 @@
-## PROJECT OVERVIEW
+# Installation Prerequisites
+
+## SYSTEM
+[python >= 3.6](http://lmgtfy.com/?q=install+python3)
+
+[ethereum & geth](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum)
+
+[solidity compiler](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html#binary-packages)
+
+
+## PYTHON3 
+
+First install the pip3 ([ubuntu](https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/), [mac](https://evansdianga.com/install-pip-osx/) or [windows](http://lmgtfy.com/?q=install+pip3+on+windows)) package manager, in order to be able to install the other useful packages.
+
+```sh
+# Web3 (Interface Connecting to ETH network )
+pip3 install web3
+
+# Solidity Compiler
+pip3 install py-solc-x
+
+#Ethereum Key Utilities
+pip3 install eth_keys
+pip3 install eth_utils
+
+#Ellyptic Curve Cryptography for Wallet Generation
+pip3 install eciespy
+
+```
+
+
+# Project Overview
                     
-   This project contains 3 or 4 main modules:
+   &nbsp;&nbsp; The purpose of this project is to create a secure, off-chain database that can be used in parralel with an on-chain smart contract and to provide the security of the blockchain to the off-chain database without the overhead of trying to put the entire database on the blockchain.
+
+   &nbsp;&nbsp; The system comprises of 4 modules - a *smart contract* defining the identity of the entities interacting within the system, a *database* which holds the data of the entities, an *interface* which connects the smart contract to the database and enables the secure interaction between the two and a *simulation* script which tests the speed and security of the whole system.
  
                                                                      
-### 1. A SMART CONTRACT 
+## 1. [A SMART CONTRACT module](https://github.com/tudorelu/fahad_blockchain/blob/master/Interface/contract_source_code.py)
 
-  &nbsp;&nbsp; Written in _solidity_, for the ethereum network, which defines the *IDENTITY* side of this project. 
+### Contents
 
-  &nbsp;&nbsp; This contract defines two entities - agent and party. There are multiple tiers of each of these entities; each entity can have different importance levels. Entities interact with each other, can validate one another and sometimes are inter-depend. 
+  &nbsp;&nbsp; Written in _solidity_, for the ethereum network, which defines the *identity* and *access rights* side of this project. 
+
+  &nbsp;&nbsp; This contract defines the entity base-structure and three separate entities - agent, organization and device. Entities interact with each other, by reading and writing data to and from one another. Entities have a tier-based leveling system, meanng that the higher their tier, the more access they have.
+
+#### Entity
+
+  &nbsp;&nbsp; An entity holds information about itself, like it's uniqueId (address), tier (level within an org), it's creatorId and it's dataHash (will talk more about it in the [database](https://github.com/tudorelu/fahad_blockchain#2-a-database) and [interface](https://github.com/tudorelu/fahad_blockchain#3-a-blockchain-data-interface) sections. It also contains info about other agents, like whi has access to it's data and what kind of access rights they have.
+
+```js
+    struct Entity {
+        address payable         uniqueId;               // address used as an unique identifier
+        int                     tier;                   // determines the level of importance and access rights
+        bytes32                 dataHash;               // hash of data stored in DB for this Entity; used against data tampering
+        address                 creatorId;              // address of creator of this entity
+        
+        // This mapping determines whether an Agent has access to this Entity's private data 
+        mapping(address => bool)    
+        agentsAccess;
+        
+        // This mapping determines  
+        //    - what data can an Agent (address) access and 
+        //    - what type of access does an Agent have to this Entity's data
+        mapping(address => mapping(bytes32 => AccessType))     
+        agentsAccessRights;
+
+        
+        // In the future, we will either have agentsAccess and agentsAccessRights turn into entitiesAccess and entitiesAccessRights, 
+        // covering all entities within the two mappings or we will create two swparate mappings for each entity type.
+        
+    }
+```
+
+#### Agent (Individual)
   
-  #### Agent (individual)
+  &nbsp;&nbsp; An agent can be simply understood as an individual. The agent's tier gives it it's status. Under any given scenario, different individuals will have different statuses.
+
+  &nbsp;&nbsp; For *example*, for hospitals, we may have patients (Tier 0), visitors (Tier 1), nurses (Tier 2) and doctors (Tier 3). Thus, the tiers define a hierarchy. Higher tiered agents, such as doctors are able to access and validate information regarding lower tiered agents such as patients. For example, a doctor may admit a patient into a hospital. However, another patient won't be able to admit a patient, nor a visitor.
   
-  &nbsp;&nbsp; An agent can be simply understood as an individual. The agent's tier 
-  gives it it's status. Under any given scenario, different individuals 
-  will have different statuses.
+```js
+    struct Agent {
+        Entity          ent;
+        address         orgId;                      // id of Organization this Agent belongs to
+    }
+```
+#### Organization (Group)
 
-  &nbsp;&nbsp; For *EXAMPLE*, for hospitals, we may have 
-  patients and visitors (Tier 0), nurses (Tier 1) and doctors (Tier 2) 
-  as agents. Thus, the tiers define a hierarchy. Higher tiered agents,
-  such as doctors are able to access and validate information regarding
-  lower tiered agents such as patients. For example, a doctor may admit
-  a patient into a hospital. However, another patient won't be able to.
-  
-  #### Party (organization)
+  &nbsp;&nbsp; An organization is simply an entity under which a group of agents operate. A hospital (Tier 0) might be one; or a police station. Higher-tiered orgs are entities under which both agents and lower-tiered orgs operate - such as a ministry. 
 
-  &nbsp;&nbsp; A party can be understood as an organization. It is simply an entity under which a group of agents operate. A hospital (Tier 0) might be a party; or a police station might be one. Higher-tiered parties are entities under which both agents and lower-tiered parties operate - such as a ministry. 
+  &nbsp;&nbsp; Continuing with the hospital *example*, the Ministry for Health (Tier 1 org) should have a minister (Tier 3 agent) and a lot of public servants (Tiers 0-2) operating under it, plus a bunch of hospitals and insurance agencies (Tier 0 orgs) that are recognized by this Ministry. However, a minister, which is a top-tiered agent in a ministry doesn't have the access rights of doctors, nor even of nurses or patients for an individual hospital, unless expressly given.
 
-  &nbsp;&nbsp; Continuing the same, hospital
-  *EXAMPLE*, the Ministry for Health (Tier 1 party) should have a minister 
-  (Tier 3 agent) and a lot of public servants (Tiers 0-2) operating 
-  under it, plus a bunch of hospitals (Tier 0 party) that are recognized 
-  by this Ministry. However, a minister, which is a top-tiered agent in 
-  a ministtry doesn't have the access rights of doctors, nor even of 
-  nurses or patients for an individual hospital, unless expressly given 
-  (IE unless they're also a doctor in that hospital).
+  &nbsp;&nbsp; Higher tiered entities can validate/approve lower tiered ones. For example, Ministeries can determine whether an org can be considered a hospital or not and doctors and nurses can determine wether somebody is a patient to a hospital.
 
-  &nbsp;&nbsp; More generally, for agents, tires are in relation to the party under 
-  which they operate.
-
-  &nbsp;&nbsp; Higher tiered entities can validate/approve lower tiered ones. For 
-  example, Ministeries can determine whether a party can be considered 
-  a hospital or not and doctors and nurses can determine wether somebody 
-  is a patient to a hospital.
-
-  #### Device (iot or mobile)
+```js
+    struct Organization {
+        Entity          ent;
+        address         adminId;                    // address of Organization's admin
+        int             maxAgentTier;               // max tier that a member of this Org can have
+        
+        mapping(address => bool)    agentMembers;   // list of agent members of this Organization
+        mapping(address => bool)    orgMembers;     // list of org members of this Organization
+    }
+```
+#### Device (IoT, Mobile Phone, Smart Watch, etc)
  
- &nbsp; &nbsp; The purpose of a device is to collect data about an agent (IE collecting vitals of patients in a hospital setting), a party (air quality in a city or factory) or something related to the system.
- 
- 
-### 2. A DATABASE 
-
-  &nbsp;&nbsp; Format tbd, probably _sql or json_, which handles the *DATA* part of this project.
-
-  &nbsp;&nbsp; This is a centralized data repository, which contains details about
-  each agent and party. Each entity has access to it's own data. Higher 
-  tiered entities may be able to access some lower tiered entity's data.
-
-  &nbsp;&nbsp; All entities are uniquely identifiable based on their public keys and 
-  may make changes to the data repository based on their access rights.
-
-  &nbsp;&nbsp; The data repository is a database that will be hosted on a server. It 
-  holds each entity's information, it's history, it's relation to other 
-  entities and it's access rights. The database will be connected to the
-  smart contract through the third module.
-
-### 3. A blockchain-data INTERFACE 
-
-  &nbsp;&nbsp; Probably written in _python_, using web3.py that handles the *LOGIC* of this system. (ADMIN SCRIPT)
-
-  &nbsp;&nbsp; The interactions between the smart contract and the data will happen
-  through this module, such as instantiation of new entities, changing
-  tier levels, changing access rights or changing the data in any way.
-
-  &nbsp;&nbsp; This program will be able to accept parameters such as what types of 
-  entities there should exist and how they will interact with each other.
-  Also, it will determine the access rights and the actions that can be 
-  taken by the different tier levels. 
-
-                                                                     
-  ### 4. A SIMULATOR 
-
-  &nbsp;&nbsp; Probably also written in _python_ and handles the *SIMULATION* of a potential real-world scenario which uses our system.
-
-  &nbsp;&nbsp; This will determine the number of entities that will exist in the 
-  simulation, how often they will interact with each other and test the
-  speed at which the system runs, given different levels of stress.
-
-  &nbsp;&nbsp; Things such as the read and write time of information from the data 
-  repo will be tested, or the changing of access rights of entities, 
-  which will require the use of blockchain.
-
-  &nbsp;&nbsp; Modules 3 and 4 might be combined into a single program.
-
-
-## TECHNICAL CONSIDERATIONS & PROJECT STRUCTURE
-                           
-### Smart Contract 
+  &nbsp; &nbsp; The purpose of a device is to collect info about an agent (IE collecting vitals of patients in a hospital setting), an org (air quality in a city or factory) or something related to the system.
   
-  + written in Solidity
-  + defines agents and parties
-  + handles identity management
-  + holds basic access rights information (through the tier system)
-  
-#### This module will contain the following:
+```js
+    struct Device {
+        Entity          ent;
+        address         adminId;                    // the administrator/owner of this device
+        address         userId;                     // the current user of this device
+    }
+```
 
-##### The Entity 'class', which contains:
-     
-   _Properties:_
-   
-      address entityId     - address used to uniquely identify entity
-      int tier             - used to determine the tier number
+## 2. [A DATABASE module](https://github.com/tudorelu/fahad_blockchain/tree/master/Database)
 
-##### The Agent (Member, or Individual) class, which extends Entity and contains:
- 
-   _Properties:_
-   
-      address partyId       - address of party to which this agent pertains (can only pertain to one party!?)
+  &nbsp;&nbsp; A _json_ (nosql) database which handles the *data* part of this project.
+
+  &nbsp;&nbsp; This contains details about each agent, org and device. Each entity has access to it's own data. If one entity wants to access another ones' data, the blockchain is checked through the smart contract to see whether the accessing entity is allowed to.
+
+  &nbsp;&nbsp; The data repository is a database that can be hosted on a server, or on a local machine, and copies of it are shared on all the nodes. It holds each entity's information, it's history, it's relation to other entities and it's access rights. The database is connected to the smart contract through the third module, the interface. 
+
+  &nbsp;&nbsp; Data integrity of each individual entity is maintained by saving the hash of their database entries within the blockchain (dataHash field inside the Entity struct). The blockchain allows either the contract owner (the administrator who initialized this system) or the entity itself to save that dataHash, by calling a function on the smart contract which can only be called using their accounts.
 
 
-##### The Party (Organisation or Institution) class, which also extends Entity and contains:
+### 3. [A blockchain-data INTERFACE module](https://github.com/tudorelu/fahad_blockchain/tree/master/Interface)
 
-   _Properties:_
-   
-      address adminId       - address of admin of party (which can add or remove agents and change their rights within party)
-      [address] members     - a list of addresses of agents pertaining to this party
-      [address] subparties  - a list of addresses of parties pertaining to this one (that are of lower tier?)
-      int maxTier           - integer determining the maximum tier level an agent can have within this party
+  &nbsp;&nbsp; Written in _python_, using web3.py that handles the *logic* of this system.
 
-   _Methods:_
-   
-      removeEntity(address entityId):
-          removes entity from party
-          
-      changeTierLevel(address entityId, int newTier): 
-          changes the tier level of a given entity, if called by admin
-      
-      initiateChangeAdmin(address newAdminId): 
-          initiates the change to a new admin (function called by current Admin)
-      
-      finalizeChangeAdmin(): 
-          should be called after initializeChangeAdmin(newAdminId) was called, 
-          by owner of the private key of address newAdminId (potential new admin)
+  &nbsp;&nbsp; The interactions between the smart contract and the data happens through this module, such as instantiation of new entities, changing tier levels, changing access rights or changing the data in any way. When somebody tries to change the database through the interface, first the blockchain will be consulted to check whether that entity is allowed to. Once they do, the new database hash is saved. If somebody changes the database outside of the interface, we will know that has happened and where the data was changed and the new data won't be valid.
 
+### 4. [A SIMULATION module](https://github.com/tudorelu/fahad_blockchain/tree/master/Simulation)
 
-##### The Device class, which extends Entity and contains:
- 
-   _Properties:_
-   
-      address adminId       - address of agent / party who has admin access to this data source
-      
-      
-##### The system admin / owner, which also extends Entity and has hard-coded full access to all methods
-    
-   _Methods:_
-    
-      changeTierLevel(address partyId, address entity, int newTier): 
-          changes the tier level of a given entity
+  &nbsp;&nbsp; Written in _python_ and handles the *SIMULATION* of a potential real-world scenario which uses our system.
 
-### Database
-  
-  + SQL or json 
-  + hosted locally or on the web
-  + holds information about entities
-  + holds more detailed access-rights information
+  &nbsp;&nbsp; This will determine the number of entities that will exist in the simulation, how often they will interact with each other and test the speed at which the system runs. Things such as the read and write time of information from the data repo will be tested, or the changing of access rights of entities, which will require the use of blockchain.
 
-#### This module will contain the following:
-  
-  + Check the database_structure.json file for overall DB structure.
-  
-  [Agent](https://www.mockaroo.com/defd7460)
-  
-  [Party](https://www.mockaroo.com/04228c10)
-  
-  [Access Rights](https://www.mockaroo.com/9c195070)
+### 5. [A PRIVATE BLOCKCHAIN module](https://github.com/tudorelu/fahad_blockchain/tree/master/Private%20Blockchain)
 
-### Interface
-  
-  + written in Python 
-  + defines systems' parameters (inputs)
-  + uses web3.py for interfacing with the ethereum network
-  + compiles and launches the smart contract based on params  
-  + provides the connection between the smart contract and the database 
+  &nbsp;&nbsp; In order to properly simulate the speed of the system, we needed to create a private blockchain and add a number of nodes to it. 
 
-#### This module will contain the following:
-  
-  + TBD by week 3
- 
-### Simulator
-  
-  + written in Python
-  + used to speed test the system
+#### First Node
 
-#### This module will contain the following:
-  
-  + TBD by week 3
+  &nbsp;&nbsp; First, we initialized a private blockchain on one of our personal computers and ran the geth node software on our computer, making it the first node on our blockchain. Then, we copied this node's enode id.
 
-   Since the Identity management will be handled through a smart contract on top of the blockchain, and the blockchain will hold information about the tier levels of the individual entities, the only kind of action that will be dependent upon the TX speed of the blockchain is the changing of tier levels for entities. 
+#### Subsequent Nodes
 
+  &nbsp;&nbsp; Next we instantiated multiple AWS servers to create the other nodes. Once a server was created, we ran a few commands to install the prerequisites, initialize the blockchain locally (using the same parameters as the first node), run the geth node software and then to connect to the initial node that was on the chain using the enode id that we copied initially.
 
-## MILESTONES
+# Progress
 
-### Week 1 (1st - 7th April)
+  &nbsp;&nbsp; Because of time factors, we couldn't completely implement all the requirements. We did however implement the minimal requirements allowing us to run the simulation.
 
-#### Smart Contract Module
-
-  [Defines entities & basic functionality]()
-    
-  + define entity, agent & party
-  + methods: assign agent to party, assign admin to party
-
-#### Database Module
-
-  [Define general structure of database]()
-
-#### Overall
-
-  Plan what methods will be handled by the smart contract module and which ones by the interface module.
-  
-  Anything pertaining to reading access rights, storing tier levels and basic organisational structure (IE basic authentication) will be handled by the blockchain, anything more complicated than that should be handled by the interface.
-
-### Week 2 (8th - 14th April)
-
-#### Smart Contract Module
-
-  Define advanced functionality
-
-#### Database Module
-
-  Create DB based on general structure
-  Populate with mock data, for testing (10-20 items)
-
-#### Interface Module (basic functionality)
-    
-  Basic bockchain interaction
-    
-  + read data
-  + call functions
-
-  Basic DB interaction
-    
-  + read & write
-
-### Week 3 (15th - 21st April)
-
-#### Smart Contract Modules
-
-  Launch contract on testnet
-  
-#### Interface Module (advanced functionality)
-
-  Blockchain functionality
-    
-  + programatically launch smart contract on testnet
-    
-  Blockchain to DB interaction  
-    
-  + write functions to connect the two modules
-  + be able to write to DB only if blockchain permits and vice-versa
-  + be able to write to DB by using he encrypted private key of uniqueId
-
-#### Simulation Module
-
-  Defne simulation scenatio
-  
-### Week 4 (22nd - 28th April)
-
-#### Simulation Module
-  
-  Develop and run simulation scenario
-
-### Week 5 (29th April - 6th May)
-
-#### Overall
-
-  Putting it all together
-
-## MISCELLANEOUS
-
-### USE CASES
- 
-Reading data from the data repository works as such:
-
-An entity makes a request to read data
-
-    If the data is publicly available, it is read from the DB and shown to the entity. 
-    
-    Otherwise:
-        - If the request contained the sender's private key and if the sender has access to the data, then it will be shown
-        - Otherwise it won't be shown, stating 'access denied'
-
- ### Reserach Links
-
-   [Blockchain IOT Market - Global forecast for 2024](https://www.marketsandmarkets.com/Market-Reports/blockchain-iot-market-168941858.html)
-   
-   [IOTeX Research (blockchain IOT project)](https://iotex.io/academics)
-   
-   [Holochain - worth looking into for v3 of this system](https://holochain.org/)
+  &nbsp;&nbsp; For the purpose of the first paper -> *to simulate the speed with which multiple entities interact securely, with each-other through this on and off-chain system*, the agents are the entities who have most of the functionality developed, so in the simulation the intercation that is being run is between multiple agents. This runs at exactly the same speed as running it benween any other two entities, because in the smart contract the entities are defined using almost the same variables, and inside the interface the function for saving inside the database within any Entity's data takes the same amount of time.
