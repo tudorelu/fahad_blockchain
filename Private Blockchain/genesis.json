@@ -1,12 +1,12 @@
 {
-"config": {  
-        "chainId": 8989, 
-        "eip155Block": 0,
-        "eip158Block": 0,
-        "ByzantiumBlock": 0,
-        "ConstantinopleBlock": 0
-    },
-    "difficulty": "0x2000",
-    "gasLimit": "0x80000000000",
-    "alloc": {}
+	"config": {  
+	      "chainId": 8989, 
+	      "eip155Block": 0,
+	      "eip158Block": 0,
+	      "ByzantiumBlock": 0,
+	      "ConstantinopleBlock": 0
+	  },
+	  "difficulty": "0x2000",
+	  "gasLimit": "0x80000000000",
+	  "alloc": {}
 }

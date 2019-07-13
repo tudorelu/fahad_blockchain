@@ -1,0 +1,16 @@
+[parity]
+chain = "spec.json"
+base_path = "/tmp/parity/OCIoT-Chain/node0"
+[network]
+port = 30300
+[rpc]
+port = 8540
+apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts", "private"]
+[websockets]
+port = 8450
+[account]
+password = ["node.pwds"]
+unlock = ["0x3fcc041d2926933ea7e7a0cfcb41eb5f77ec6f91", "0x75746926b304fcc01766e85b78f2617cba0d5ccb"]
+[mining]
+engine_signer = "0x3fcc041d2926933ea7e7a0cfcb41eb5f77ec6f91"
+reseal_on_txs = "none"

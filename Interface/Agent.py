@@ -6,7 +6,7 @@ from Interface.Constants import AccessType
 
 class Agent:
 
-	def __init__(self, interface:any, 
+	def __init__(self, interface:any, await_receipt=True,
 		tier:int=0, data:dict={"fname":"","lname":"","unique_id":"","data_1":{"entry_1":"","entry_2":"","subfolder_1":{},"subfolder_2":{}},"data_2":{"entry_1":"","entry_2":"","subfolder_1":{},"subfolder_2":{},},"data_3":{"entry_1":"","entry_2":"","subfolder_1":{},"subfolder_2":{},}}, 
 		account_address:str=None, account_password:str="", time_it:bool=False):
 		
@@ -56,11 +56,12 @@ class Agent:
 		if self.time_it:
 			start = time.time();
 		
-		if self.interface.contract_transact('createNewAgent', (self.unique_id, self.data_hash)):
+		if self.interface.contract_transact('createNewAgent', (self.unique_id, self.data_hash), await_receipt=await_receipt):
 			if self.time_it:
 				end = time.time();
 				print ("Creating Agent on blockchain took  %.3f s " % (end - start));
 				start = time.time();
+				print("AgendID:"+self.unique_id);
 
 			# save Agent details in database, after succesfully saving them on the blockchain
 			self.interface.save_entity_data_to_database(self, root='agents')
@@ -73,8 +74,8 @@ class Agent:
 		if self.time_it:
 			start = time.time()
 
-		# put 10 eth into agent's account
-		self.interface.w3.personal.sendTransaction({"to":self.unique_id, "from": self.interface.w3.personal.listAccounts[0], "value":self.interface.w3.toWei("1", "ether")}, "")
+		# put 1 eth into agent's account
+		self.interface.w3.personal.sendTransaction({"to":self.unique_id, "from": self.interface.w3.eth.defaultAccount, "value":self.interface.w3.toWei("1", "ether")}, "")
 
 		if self.time_it:
 			end = time.time();
@@ -139,13 +140,13 @@ class Agent:
 
 	##### ACCESS RIGHTS #####
 
-	def give_agent_access_to_data(self, accessor_id:str, access_type:AccessType, data_path:str):
+	def give_agent_access_to_data(self, accessor_id:str, access_type:AccessType, data_path:str, await_receipt=True):
 		""" Gives accessor_id access to agent's data """
-		return self.interface.contract_transact('giveAgentAccessToData', args=(self.unique_id, accessor_id, access_type.value, data_path.encode("utf-8")), from_address=self.unique_id)
+		return self.interface.contract_transact('giveAgentAccessToData', args=(self.unique_id, accessor_id, access_type.value, data_path.encode("utf-8")), from_address=self.unique_id, await_receipt=await_receipt)
 
-	def remove_agent_access_from_data(self, accessor_id:str, data_path:str):
+	def remove_agent_access_from_data(self, accessor_id:str, data_path:str, await_receipt=True):
 		""" Removes accessor_id's access right to this Agent's data_path """
-		return self.interface.contract_transact('removeAgentAccessToData', args=(self.unique_id, accessor_id, data_path.encode("utf-8")), from_address=self.unique_id)
+		return self.interface.contract_transact('removeAgentAccessToData', args=(self.unique_id, accessor_id, data_path.encode("utf-8")), from_address=self.unique_id, await_receipt=await_receipt)
 
 
 	def get_agent_access_rights_to_data(self, accessor_id:str, data_path:str):

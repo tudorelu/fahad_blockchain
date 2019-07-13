@@ -12,6 +12,13 @@
 
 First install the pip3 ([ubuntu](https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/), [mac](https://evansdianga.com/install-pip-osx/) or [windows](http://lmgtfy.com/?q=install+pip3+on+windows)) package manager, in order to be able to install the other useful packages.
 
+On Ubuntu 18
+
+```sh
+sudo apt update
+sudo apt install python3-pip
+```
+
 ```sh
 # Web3 (Interface Connecting to ETH network )
 pip3 install web3

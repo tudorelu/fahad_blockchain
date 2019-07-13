@@ -44,22 +44,29 @@ from Interface.Utilities import Utilities
 
 class ContractDatabaseInterface:
 
-	def __init__(self, contract_address:str=None, provider_link:str= "http://127.0.0.1:7545", time_it:bool=False):
+	def __init__(self, contract_address:str=None, provider_link:str= "http://127.0.0.1:7545", time_it:bool=False,
+		default_acct_address=None, default_acct_pass=""):
 		
 		self.time_it					= time_it
-
+		
 		if self.time_it:
 			start = time.time()
 
 		# this connects to the web3 provider (blockchain node)		
-		self.w3 						= Web3(HTTPProvider(provider_link))
+		self.w3 						= Web3(HTTPProvider(provider_link, request_kwargs={'timeout':60}))
 
 		if self.time_it:
 			end = time.time();
 			print ("Connecting to w3 provider took  %.3f s " % (end - start));
 
+		#self.w3.personal.unlockAccount(self.w3.eth.accounts[default_acct_number], default_acct_pass, '0x1000');
+		if default_acct_address is not None:
+			self.w3.eth.defaultAccount = self.w3.toChecksumAddress(default_acct_address)
+		else:
+			self.w3.eth.defaultAccount = self.w3.toChecksumAddress(self.w3.eth.accounts[0])
+	
+		print ("Default account is %s " % self.w3.eth.defaultAccount)
 		# set pre-funded account as sender
-		self.w3.eth.defaultAccount		= self.w3.eth.accounts[0]
 
 		# either load a contract from address or instantiate a new one
 
@@ -73,7 +80,7 @@ class ContractDatabaseInterface:
 				end = time.time();
 				print ("Creating new contract instance took  %.3f s " % (end - start));
 		else:
-			self.contract_instance 		= self.get_contract_instance_from_address(contract_address);
+			self.contract_instance 		= self.get_contract_instance_from_address(self.w3.toChecksumAddress(contract_address));
 
 			if self.time_it:
 				end = time.time();
@@ -96,6 +103,8 @@ class ContractDatabaseInterface:
 		print("About to create contract...")
 			
 		tx_hash = System.constructor().transact()
+
+		print("Getting Receipt...")
 
 		# Wait for the transaction to be mined, and get the transaction receipt
 		tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
@@ -124,7 +133,7 @@ class ContractDatabaseInterface:
 		    abi=contract_interface['abi'],
 		)
 
-	def contract_transact(self, function_name:str, args:tuple=(), from_address:str=None, account_password=""):
+	def contract_transact(self, function_name:str, args:tuple=(), from_address:str=None, account_password="", await_receipt=True):
 		""" Call contract function
 		function_name : same of smart contract function to call
 		returns : True if function call was succesfull, False otherwise """
@@ -144,14 +153,17 @@ class ContractDatabaseInterface:
 			return None	
 
 		tx_hash = self.contract_instance.functions[function_name](*args).transact({"from":from_address})
-		tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
-		# print(tx_receipt)
+		
+		if await_receipt:			
+			tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+			# print(tx_receipt)
 
-		if self.time_it:
-			end = time.time();
-			print ("Calling " + function_name + " took  %.3f s " % (end - start));
+			if self.time_it:
+				end = time.time();
+				print ("Calling " + function_name + " took  %.3f s " % (end - start));
 
-		return tx_receipt['status'] == 1
+			return tx_receipt['status'] == 1
+
 
 	def contract_call(self, function_name:str, args:tuple=(), from_address:str=None, account_password=""):
 		""" Call contract view function """

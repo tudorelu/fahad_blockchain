@@ -14,7 +14,7 @@ from multiprocessing import Pool
 class Simulation:
 	
 	def __init__(self, contract_address:str=None, 
-		agents_no:int=0, orgs_no:int=0, devs_no:int=0, provider_link:str="http://121.45.192.206:8545"):
+		agents_no:int=0, orgs_no:int=0, devs_no:int=0, provider_link:str="http://103.217.166.130:8540"):
 		''' Either creates a new Contract or loads one from address, 
 			then creates a number of agents, orgs and devices '''
 
@@ -78,15 +78,15 @@ class Simulation:
 		print("Creating " +str(devs_no)+ " devices took %.4f seconds." % (devs_end-devs_start))
 
 	@staticmethod
-	def generic_simulation():
+	def generic_simulation(acct_address=None, acct_pass=""):
 		''' 
 			Runs a generic simulation involving 6 entities reading and writing data to and from each other. 
 			Run this on 15 separate nodes and you're simulating a system with 90 entities interacting on the blockchain.
  
 			Compute the average amount of time it takes for a function on the blockchain to be computed .
 		'''
- 
-		interface = ContractDatabaseInterface(contract_address="0x5E6631df89013E5a3C01cA03254D5214Ae5A0D09", provider_link="http://127.0.0.1:8543", time_it=True)
+
+		interface = ContractDatabaseInterface(contract_address="0xfae92c423740318ba144db41328a7580871319d2", provider_link="http://127.0.0.1:8540", time_it=True, default_acct_address=acct_address, default_acct_pass=acct_pass)
 
 		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
 		start = time.time()
@@ -120,9 +120,12 @@ class Simulation:
 
 		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~")
 		start = time.time()
-		agent5 = Agent(interface, time_it=True)
+		agent6 = Agent(interface, time_it=True)
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("\n\n~~~~~~~~~~~~ Now Wait 11 seconds for the blocks to mine ~~~~~~~~~~~~\n\n")
+		time.sleep(11)
 
 		print("~~~~~~~~~~~~ GIVE AGENT 2 ADMIN ACCESS TO AGENT 1's DATA ~~~~~~~~~~~~")
 		start = time.time()
@@ -174,7 +177,7 @@ class Simulation:
 
 		print("~~~~~~~~~~~~ GIVE AGENT 6 ADMIN ACCESS TO AGENT 5's DATA ~~~~~~~~~~~~")
 		start = time.time()
-		agent5.give_agent_access_to_data(agent6.unique_id, AccessType.ADMIN, "data_2")
+		agent6.give_agent_access_to_data(agent6.unique_id, AccessType.ADMIN, "data_2")
 		end = time.time()
 		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
@@ -182,6 +185,9 @@ class Simulation:
 		# agent1.get_agent_access_rights_to_data(agent3.unique_id, "data_1")
 		# agent2.get_agent_access_rights_to_data(agent1.unique_id, "data_2")
 		# agent2.get_agent_access_rights_to_data(agent3.unique_id, "data_2")
+		
+		print("\n\n~~~~~~~~~~~~ Now Wait 11 seconds for the blocks to mine ~~~~~~~~~~~~\n\n")
+		time.sleep(11)
 
 		try:
 			while True:
@@ -278,6 +284,139 @@ class Simulation:
 		print("Has data integrity? "+str(agent6.has_data_integrity()))
 		end = time.time()
 		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+	@staticmethod
+	def tps_simulation(acct_address=None, acct_pass="", provider_link="http://127.0.0.1:8540"):
+		''' 
+			Runs a generic simulation involving 6 entities reading and writing data to and from each other. 
+			Run this on 15 separate nodes and you're simulating a system with 90 entities interacting on the blockchain.
+ 
+			Compute the average amount of time it takes for a function on the blockchain to be computed .
+		'''
+
+		interface = ContractDatabaseInterface(contract_address="0xbff1019e733aec6e92f40e40e76eda7e47559a05", provider_link=provider_link, time_it=True, default_acct_address=acct_address, default_acct_pass=acct_pass)
+
+		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
+		start = time.time()
+		agent1 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 2 ~~~~~~~~~~~~")
+		start = time.time()
+		agent2 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 2 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~")
+		start = time.time()
+		agent3 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+
+		print("~~~~~~~~~~~~ CREATING AGENT 4 ~~~~~~~~~~~~")
+		start = time.time()
+		agent4 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 4 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 5 ~~~~~~~~~~~~")
+		start = time.time()
+		agent5 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 5 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~")
+		start = time.time()
+		agent6 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 7 ~~~~~~~~~~~~")
+		start = time.time()
+		agent7 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 7 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 8 ~~~~~~~~~~~~")
+		start = time.time()
+		agent8 = Agent(interface, time_it=True, await_receipt=True)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 8 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("~~~~~~~~~~~~ CREATING AGENT 9 ~~~~~~~~~~~~")
+		start = time.time()
+		agent9 = Agent(interface, time_it=True, await_receipt=False)
+		end = time.time()
+		print("~~~~~~~~~~~~ CREATING AGENT 9 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
+
+		print("\n\n~~~~~~~~~~~~ Now Wait a few seconds for the blocks to mine ~~~~~~~~~~~~\n\n")
+		time.sleep(5)
+
+		print("\n\n~~~~~~~~~~~~ Now We start writing to the blockchain, press CTRL+C to get to next step ~~~~~~~~~~~~\n\n")
+		try:
+			i = 0
+			while True:
+				agent1.give_agent_access_to_data(agent2.unique_id, AccessType.ADMIN, "data_"+str(i), await_receipt=False)
+				agent1.give_agent_access_to_data(agent3.unique_id, AccessType.ADMIN, "data_"+str(i), await_receipt=False)
+				agent2.give_agent_access_to_data(agent1.unique_id, AccessType.READ, "data_"+str(i), await_receipt=False)
+				agent2.give_agent_access_to_data(agent3.unique_id, AccessType.WRITE, "data_"+str(i), await_receipt=False)
+
+				agent4.give_agent_access_to_data(agent5.unique_id, AccessType.ADMIN, "data_"+str(i), await_receipt=False)
+				agent4.give_agent_access_to_data(agent6.unique_id, AccessType.ADMIN, "data_"+str(i), await_receipt=False)
+				agent5.give_agent_access_to_data(agent4.unique_id, AccessType.READ, "data_"+str(i), await_receipt=False)
+				agent5.give_agent_access_to_data(agent6.unique_id, AccessType.WRITE, "data_"+str(i), await_receipt=False)
+
+				agent7.give_agent_access_to_data(agent8.unique_id, AccessType.ADMIN, "data_"+str(i), await_receipt=False)
+				agent7.give_agent_access_to_data(agent9.unique_id, AccessType.ADMIN, "data_"+str(i), await_receipt=False)
+				agent8.give_agent_access_to_data(agent7.unique_id, AccessType.READ, "data_"+str(i), await_receipt=False)
+				agent8.give_agent_access_to_data(agent9.unique_id, AccessType.WRITE, "data_"+str(i), await_receipt=False)
+
+				i = i + 1
+				print(str(i))
+
+		except KeyboardInterrupt:
+			print("Quitting ... ")
+		
+		print("\n\n~~~~~~~~~~~~ Now Wait a few seconds for the blocks to mine, before we check the blockchain for mistakes ~~~~~~~~~~~~\n\n")
+		time.sleep(13)
+
+		incorrect = 0
+		
+		for j in range(0, i):
+			access_right = agent1.get_agent_access_rights_to_data(accessor_id=agent2.unique_id, data_path="data_"+str(j))
+			if access_right != 3:
+				print("access right of agent 2 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+
+				print (access_right != 3)
+
+				print ('3' != str(3))
+				print (str(access_right) != str(3))
+
+				print (str(3) != access_right)
+				print ('3' != str(access_right))
+
+			access_right = agent1.get_agent_access_rights_to_data(accessor_id=agent3.unique_id, data_path="data_"+str(j))
+			if access_right != 3:
+				print("access right of agent 3 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+
+			access_right = agent2.get_agent_access_rights_to_data(accessor_id=agent1.unique_id, data_path="data_"+str(j))
+			if access_right != 1:
+				print("access right of agent 1 to agent 2's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(1)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+			access_right = agent2.get_agent_access_rights_to_data(accessor_id=agent3.unique_id, data_path="data_"+str(j))
+			if access_right != 2:
+				print("access right of agent 3 to agent 2's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(2)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+
+		if incorrect == 0:
+			print("Congrats! No incorrect writes on the blockchain! ")
+		else:
+			print("There were "+str(incorrect)+" incorrect writes on the blockchain, out of "+str(i*4))
 
 	@staticmethod
 	def time_function(func:any, args:tuple=()):
