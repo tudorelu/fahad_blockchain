@@ -1,9 +1,0 @@
-admin.addPeer("enode://cd7dc4f9ee7d6dde92bcc382ac704dc84f9e638da7571d45e10a43236a580c9aab7705b536d07301121fb974ce44d93ace8143ca6f356c10eef42a29ac2caa16@203.7.100.186:49435?discport=0")
-admin.peers
-admin.addPeer("enode://cd7dc4f9ee7d6dde92bcc382ac704dc84f9e638da7571d45e10a43236a580c9aab7705b536d07301121fb974ce44d93ace8143ca6f356c10eef42a29ac2caa16@203.7.100.186:49435?discport=0")
-admin.peers
-miner.start
-miner.start()
-personal
-miner.start()
-miner.stop()
