@@ -294,7 +294,6 @@ class Simulation:
  
 			Compute the average amount of time it takes for a function on the blockchain to be computed .
 		'''
-
 		interface = ContractDatabaseInterface(contract_address="0x594ec95ce0ad3222bc569019577fb29d85793352", provider_link=provider_link, time_it=True, default_acct_address=acct_address, default_acct_pass=acct_pass)
 
 		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
