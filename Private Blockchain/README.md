@@ -8,12 +8,16 @@ First, initialize private blockchain from genesis file:
 
 ```sh
 geth --identity 898911 init Private\ Blockchain/genesis.json --datadir Private\ Blockchain/ChainData 
+
+geth init --datadir privatenet genesis.json
 ```
 
 Then start the network and check out the enode id.
 
 ```sh
 geth --datadir Private\ Blockchain/ChainData --networkid 898911 --rpc --rpcport 8543 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --rpcapi "eth,net,web3,personal,miner" console
+
+geth --datadir privatenet --networkid 1337 --port 31333 --rpc --rpcport 8538 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --rpcapi "eth,net,web3,personal,miner" console --nodiscover
 ```
 
 ```py

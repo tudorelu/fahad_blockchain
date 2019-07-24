@@ -3,6 +3,7 @@ chain = "spec.json"
 base_path = "/tmp/parity/OCIoT-Chain/node1"
 [network]
 port = 30301
+bootnodes = ["enode://61801714692854bdb9247a1d081f3c1c06a4e5baf13ac1c34dd1d5995db09fddcc6e01211298543939057d9bad8f693ed4a3c57929b815c70092da9bb6c48bf1@172.31.44.118:30300", "enode://e633c43e6da2c5f380bf2e916507b7627fbece9aea853c8aae6c806e846297cad82fdf9fe71cfc21305c2cad8470f150c3095ebed33e97c8f01aa7152805c38f@137.92.194.212:30300"]
 [rpc]
 port = 8541
 apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts", "private"]

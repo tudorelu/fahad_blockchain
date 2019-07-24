@@ -1,4 +1,4 @@
-
+{
     "name": "OCIoT-Chain-PoA",
     "engine": {
         "authorityRound": {
@@ -18,7 +18,7 @@
         "gasLimitBoundDivisor": "0x400",
         "maximumExtraDataSize": "0x20",
         "minGasLimit": "0x1388",
-        "networkID" : "0x2323",
+        "networkID" : "0x23663882793023",
         "eip155Transition": 0,
         "validateChainIdTransition": 0,
         "eip140Transition": 0,
