@@ -287,7 +287,7 @@ class Simulation:
 
 
 	@staticmethod
-	def tps_simulation(acct_address=None, acct_pass="", provider_link="http://127.0.0.1:8540"):
+	def tps_simulation(acct_address=None, acct_pass="", provider_link="http://127.0.0.1:8538"):
 		''' 
 			Runs a generic simulation involving 6 entities reading and writing data to and from each other. 
 			Run this on 15 separate nodes and you're simulating a system with 90 entities interacting on the blockchain.
@@ -295,7 +295,7 @@ class Simulation:
 			Compute the average amount of time it takes for a function on the blockchain to be computed .
 		'''
 
-		interface = ContractDatabaseInterface(contract_address="0xbff1019e733aec6e92f40e40e76eda7e47559a05", provider_link=provider_link, time_it=True, default_acct_address=acct_address, default_acct_pass=acct_pass)
+		interface = ContractDatabaseInterface(contract_address="0x594ec95ce0ad3222bc569019577fb29d85793352", provider_link=provider_link, time_it=True, default_acct_address=acct_address, default_acct_pass=acct_pass)
 
 		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
 		start = time.time()
