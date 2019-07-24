@@ -390,15 +390,6 @@ class Simulation:
 			if access_right != 3:
 				print("access right of agent 2 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
 				incorrect = incorrect + 1
-
-				print (access_right != 3)
-
-				print ('3' != str(3))
-				print (str(access_right) != str(3))
-
-				print (str(3) != access_right)
-				print ('3' != str(access_right))
-
 			access_right = agent1.get_agent_access_rights_to_data(accessor_id=agent3.unique_id, data_path="data_"+str(j))
 			if access_right != 3:
 				print("access right of agent 3 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
@@ -412,6 +403,44 @@ class Simulation:
 			if access_right != 2:
 				print("access right of agent 3 to agent 2's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(2)+", but is "+str(access_right))
 				incorrect = incorrect + 1
+
+			access_right = agent4.get_agent_access_rights_to_data(accessor_id=agent5.unique_id, data_path="data_"+str(j))
+			if access_right != 3:
+				print("access right of agent 2 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+			access_right = agent4.get_agent_access_rights_to_data(accessor_id=agent6.unique_id, data_path="data_"+str(j))
+			if access_right != 3:
+				print("access right of agent 3 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+
+			access_right = agent5.get_agent_access_rights_to_data(accessor_id=agent4.unique_id, data_path="data_"+str(j))
+			if access_right != 1:
+				print("access right of agent 1 to agent 2's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(1)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+			access_right = agent5.get_agent_access_rights_to_data(accessor_id=agent6.unique_id, data_path="data_"+str(j))
+			if access_right != 2:
+				print("access right of agent 3 to agent 2's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(2)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+
+			access_right = agent7.get_agent_access_rights_to_data(accessor_id=agent8.unique_id, data_path="data_"+str(j))
+			if access_right != 3:
+				print("access right of agent 2 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+			access_right = agent7.get_agent_access_rights_to_data(accessor_id=agent9.unique_id, data_path="data_"+str(j))
+			if access_right != 3:
+				print("access right of agent 3 to agent 1's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(3)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+
+			access_right = agent8.get_agent_access_rights_to_data(accessor_id=agent7.unique_id, data_path="data_"+str(j))
+			if access_right != 1:
+				print("access right of agent 1 to agent 2's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(1)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+			access_right = agent8.get_agent_access_rights_to_data(accessor_id=agent9.unique_id, data_path="data_"+str(j))
+			if access_right != 2:
+				print("access right of agent 3 to agent 2's path \'"+"data_"+str(j) +"\'' seems to be wrong, should be "+str(2)+", but is "+str(access_right))
+				incorrect = incorrect + 1
+
+
 
 		if incorrect == 0:
 			print("Congrats! No incorrect writes on the blockchain! ")

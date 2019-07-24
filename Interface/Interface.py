@@ -196,7 +196,7 @@ class ContractDatabaseInterface:
 		if from_address == None:
 			from_address = accessor_id
 
-		print("Getting the access rights of "+accessor_id+" to "+owner_id+"'s' data, path "+data_path)
+		# print("Getting the access rights of "+accessor_id+" to "+owner_id+"'s' data, path "+data_path)
 		return self.contract_call(function_name='getAgentAccessRightsToData', args=(owner_id, accessor_id, data_path.encode("utf-8")), from_address=from_address)
 		
 	#################### DATABASE FUNCTIONS ######################
