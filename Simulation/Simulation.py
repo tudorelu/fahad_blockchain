@@ -314,7 +314,6 @@ class Simulation:
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
-
 		print("~~~~~~~~~~~~ CREATING AGENT 4 ~~~~~~~~~~~~")
 		start = time.time()
 		agent4 = Agent(interface, time_it=True, await_receipt=False)
@@ -341,7 +340,7 @@ class Simulation:
 
 		print("~~~~~~~~~~~~ CREATING AGENT 8 ~~~~~~~~~~~~")
 		start = time.time()
-		agent8 = Agent(interface, time_it=True, await_receipt=True)
+		agent8 = Agent(interface, time_it=True, await_receipt=False)
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 8 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
