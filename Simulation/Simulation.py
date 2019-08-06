@@ -294,59 +294,72 @@ class Simulation:
  
 			Compute the average amount of time it takes for a function on the blockchain to be computed .
 		'''
+
+		sim_start = time.time()
+		total_txs = 0
+
 		interface = ContractDatabaseInterface(contract_address="0x594ec95ce0ad3222bc569019577fb29d85793352", provider_link=provider_link, time_it=True, default_acct_address=acct_address, default_acct_pass=acct_pass)
 
 		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~")
 		start = time.time()
 		agent1 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 1 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 2 ~~~~~~~~~~~~")
 		start = time.time()
 		agent2 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 2 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~")
 		start = time.time()
 		agent3 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 3 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 4 ~~~~~~~~~~~~")
 		start = time.time()
 		agent4 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 4 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 5 ~~~~~~~~~~~~")
 		start = time.time()
 		agent5 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 5 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~")
 		start = time.time()
 		agent6 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 6 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 7 ~~~~~~~~~~~~")
 		start = time.time()
 		agent7 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 7 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 8 ~~~~~~~~~~~~")
 		start = time.time()
 		agent8 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 8 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
 		print("~~~~~~~~~~~~ CREATING AGENT 9 ~~~~~~~~~~~~")
 		start = time.time()
 		agent9 = Agent(interface, time_it=True, await_receipt=False)
+		total_txs = total_txs + 2
 		end = time.time()
 		print("~~~~~~~~~~~~ CREATING AGENT 9 ~~~~~~~~~~~~ took %.4f s \n" % (end-start))
 
@@ -374,6 +387,7 @@ class Simulation:
 
 				i = i + 1
 				print(str(i))
+				total_txs = total_txs + 12
 
 		except KeyboardInterrupt:
 			print("Quitting ... ")
@@ -439,11 +453,14 @@ class Simulation:
 				incorrect = incorrect + 1
 
 
-
 		if incorrect == 0:
 			print("Congrats! No incorrect writes on the blockchain! ")
 		else:
 			print("There were "+str(incorrect)+" incorrect writes on the blockchain, out of "+str(i*4))
+
+		sim_stop = time.time()
+		print("The whole simulation took "+str(int(sim_stop-sim_start))+"s")
+		print("This node alone generated "+str(total_txs)+" transactions")
 
 	@staticmethod
 	def time_function(func:any, args:tuple=()):

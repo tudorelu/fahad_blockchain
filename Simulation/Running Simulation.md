@@ -29,3 +29,14 @@ Then, to run the nodes, we run on each instance (and on our computer):
 After the node is running, on our computer only we type the command ` admin.nodeInfo.enode ` which will give you something like *enode://<ENODE_ID>*. 
 
 Then, on each instance we type admin.addPeer("enode://<ENODE_ID>") and hit ENTER, which will make each node connect to the node on our computer. 
+
+geth --identity 13373 init --datadir privatenet genesis.json 
+
+cd Private\ Blockchain
+
+geth --datadir privatenet --networkid 13373 console 
+
+cd Private\ Blockchain
+
+geth --datadir privatenet --networkid 13373 --port 31333 --rpc --rpcport 8538 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --rpcapi "eth,net,web3,personal,miner" console 
+admin.addPeer("enode://e7a2645d3db7a9ea421d0b99f72c3d8d5a64cc978cadc79f311498d2400b4f888b27593ab2abd9873e4b731a3fa1272c699852db76f032c367905e882f9fc663@18.212.25.187:31333")
