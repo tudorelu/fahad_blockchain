@@ -1,41 +1,3 @@
-# Installation Prerequisites
-
-## SYSTEM
-[python >= 3.6](http://lmgtfy.com/?q=install+python3)
-
-[ethereum & geth](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum)
-
-[solidity compiler](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html#binary-packages)
-
-
-## PYTHON3 
-
-First install the pip3 ([ubuntu](https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/), [mac](https://evansdianga.com/install-pip-osx/) or [windows](http://lmgtfy.com/?q=install+pip3+on+windows)) package manager, in order to be able to install the other useful packages.
-
-On Ubuntu 18
-
-```sh
-sudo apt update
-sudo apt install python3-pip
-```
-
-```sh
-# Web3 (Interface Connecting to ETH network )
-pip3 install web3
-
-# Solidity Compiler
-pip3 install py-solc-x
-
-#Ethereum Key Utilities
-pip3 install eth_keys
-pip3 install eth_utils
-
-#Ellyptic Curve Cryptography for Wallet Generation
-pip3 install eciespy
-
-```
-
-
 # Project Overview
                     
    &nbsp;&nbsp; The purpose of this project is to create a secure, off-chain database that can be used in parralel with an on-chain smart contract and to provide the security of the blockchain to the off-chain database without the overhead of trying to put the entire database on the blockchain.
@@ -155,6 +117,43 @@ pip3 install eciespy
 #### Subsequent Nodes
 
   &nbsp;&nbsp; Next we instantiated multiple AWS servers to create the other nodes. Once a server was created, we ran a few commands to install the prerequisites, initialize the blockchain locally (using the same parameters as the first node), run the geth node software and then to connect to the initial node that was on the chain using the enode id that we copied initially.
+
+# Installation Prerequisites
+
+## SYSTEM
+[python >= 3.6](http://lmgtfy.com/?q=install+python3)
+
+[ethereum & geth](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum)
+
+[solidity compiler](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html#binary-packages)
+
+
+## PYTHON3 
+
+First install the pip3 ([ubuntu](https://linuxize.com/post/how-to-install-pip-on-ubuntu-18.04/), [mac](https://evansdianga.com/install-pip-osx/) or [windows](http://lmgtfy.com/?q=install+pip3+on+windows)) package manager, in order to be able to install the other useful packages.
+
+On Ubuntu 18
+
+```sh
+sudo apt update
+sudo apt install python3-pip
+```
+
+```sh
+# Web3 (Interface Connecting to ETH network )
+pip3 install web3
+
+# Solidity Compiler
+pip3 install py-solc-x
+
+#Ethereum Key Utilities
+pip3 install eth_keys
+pip3 install eth_utils
+
+#Ellyptic Curve Cryptography for Wallet Generation
+pip3 install eciespy
+
+```
 
 # Progress
 
