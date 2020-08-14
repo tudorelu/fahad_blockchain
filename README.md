@@ -158,6 +158,6 @@ pip3 install eciespy
 
 # Progress
 
-  &nbsp;&nbsp; Because of time factors, we couldn't completely implement all the requirements. We did however implement the minimal requirements allowing us to run the simulation.
+  &nbsp;&nbsp; Because of time constraints we couldn't implement the complete functionality of all the above modules, however we implemented the minimal requirements allowing us to run the simulation.
 
   &nbsp;&nbsp; For the purpose of the first paper -> *to simulate the speed with which multiple entities interact securely, with each-other through this on and off-chain system*, the agents are the entities who have most of the functionality developed, so in the simulation the intercation that is being run is between multiple agents. This runs at exactly the same speed as running it benween any other two entities, because in the smart contract the entities are defined using almost the same variables, and inside the interface the function for saving inside the database within any Entity's data takes the same amount of time.
